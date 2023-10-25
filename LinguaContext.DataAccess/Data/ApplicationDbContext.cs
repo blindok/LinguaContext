@@ -12,6 +12,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<UserSentenceInfo> userSentenceInfos { get; set; }
     public DbSet<Sentence> Sentences { get; set; }
     public DbSet<UserTask> Tasks { get; set; }
+    public DbSet<Folder> Folders { get; set; }
+    public DbSet<SentenceInFolder> SentencesInFolder { get; set; }
+    public DbSet<FavoriteSentence> FavoriteSentences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

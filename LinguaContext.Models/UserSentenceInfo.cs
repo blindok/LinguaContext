@@ -15,9 +15,8 @@ public class UserSentenceInfo
     [DisplayName("User Id")]
     public int UserId { get; set; }
 
-    [Required, NotNull]
     [DisplayName("Id of Source File")]
-    public int SourceContextId { get; set; }
+    public int? SourceContextId { get; set; }
 
     [DisplayName("Creation Time")]
     public DateTime CreatedAt { get; set; }
@@ -25,9 +24,10 @@ public class UserSentenceInfo
     [DisplayName("Last Time Edited")]
     public DateTime LastEditedAt { get; set; }
 
-    public int PositionInText { get; set; }
+    [DisplayName("Position in Source Text")]
+    public int? PositionInText { get; set; }
 
-    [DisplayName("Last Seen")]
+    [DisplayName("Additional Information")]
     public string? Comment { get; set; }
 
     [ValidateNever]
@@ -36,5 +36,5 @@ public class UserSentenceInfo
 
     [ValidateNever]
     [ForeignKey("SourceContextId")]
-    public Context Context { get; set; }
+    public Context? Context { get; set; }
 }

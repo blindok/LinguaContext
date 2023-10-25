@@ -29,7 +29,7 @@ public class User
 
     [Required, NotNull]
     [DisplayName("Birth Day")]
-    public DateTime BirthDay { get; set; }
+    public DateOnly BirthDay { get; set; }
 
     [DisplayName("Interval Modifier")]
     public double PersonalIntervalModifier { get; set; } = 1;

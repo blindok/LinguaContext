@@ -3,6 +3,7 @@ using System;
 using LinguaContext.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LinguaContext.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231025160820_addFolderAndFavoritesTablesToDb")]
+    partial class addFolderAndFavoritesTablesToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,22 +55,6 @@ namespace LinguaContext.DataAccess.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Contexts");
-                });
-
-            modelBuilder.Entity("LinguaContext.Models.FavoriteSentence", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SentenceId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("UserId", "SentenceId");
-
-                    b.ToTable("FavoriteSentences");
                 });
 
             modelBuilder.Entity("LinguaContext.Models.Folder", b =>
@@ -132,22 +119,6 @@ namespace LinguaContext.DataAccess.Migrations
                     b.HasIndex("UserSentenceInfoId");
 
                     b.ToTable("Sentences");
-                });
-
-            modelBuilder.Entity("LinguaContext.Models.SentenceInFolder", b =>
-                {
-                    b.Property<int>("FolderId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SentenceId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("AddedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("FolderId", "SentenceId");
-
-                    b.ToTable("SentencesInFolder");
                 });
 
             modelBuilder.Entity("LinguaContext.Models.User", b =>
