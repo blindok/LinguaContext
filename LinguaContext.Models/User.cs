@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
@@ -31,6 +32,6 @@ public class User
     [DisplayName("Birth Day")]
     public DateOnly BirthDay { get; set; }
 
-    [DisplayName("Interval Modifier")]
-    public double PersonalIntervalModifier { get; set; } = 1;
+    [ValidateNever]
+    public PersonalFactors? Factors { get; set; }
 }

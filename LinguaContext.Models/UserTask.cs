@@ -12,10 +12,10 @@ public class UserTask
     public int UserId { get; set; }
     public int SentenceId { get; set; }
 
-    [DisplayName("First Time")]
-    public DateTime FirstTime { get; set; }
+    [DisplayName("First Review")]
+    public DateTime FirstReview { get; set; }
     [DisplayName("Last Review")]
-    public DateTime LastTime { get; set; }
+    public DateTime LastReview { get; set; }
     [DisplayName("Next Review")]
     public DateTime NextReview { get; set; }
 
@@ -24,6 +24,9 @@ public class UserTask
 
     [DisplayName("Interval")]
     public int CurrentInterval { get; set; } = 0;
+
+    [DisplayName("Ease Factor")]
+    public double EaseFactor { get; set; } = 2.5;
 
     [ValidateNever]
     [ForeignKey("UserId")]

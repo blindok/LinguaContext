@@ -30,6 +30,9 @@ public class Sentence
     [DisplayName("Word Translation")]
     public string AnswerTranslation { get; set; }
 
+    [DisplayName("Complexity Level")]
+    public string? ComplexityLevel {  get; set; }
+
     public int? UserSentenceInfoId { get; set; }
 
     [ForeignKey("UserSentenceInfoId")]

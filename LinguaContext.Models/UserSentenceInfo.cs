@@ -37,4 +37,7 @@ public class UserSentenceInfo
     [ValidateNever]
     [ForeignKey("SourceContextId")]
     public Context? Context { get; set; }
+
+    [ValidateNever]
+    public Sentence? Sentence { get; set; } // Reference navigation to dependent
 }
