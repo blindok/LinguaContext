@@ -10,12 +10,12 @@ namespace LinguaContext.Areas.User.Controlles;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly IUnitOfWork _unitOfWork;
+    //private readonly IUnitOfWork _unitOfWork;
 
-    public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
+    public HomeController(ILogger<HomeController> logger)
     {
         _logger = logger;
-        _unitOfWork = unitOfWork;
+        //_unitOfWork = unitOfWork;
     }
 
     public IActionResult Index()

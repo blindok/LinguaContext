@@ -23,9 +23,16 @@
                             <a class="nav-link text-dark" asp-area="User" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="SentenceManage" asp-action="Index">Sentences</a>
+                            <a class="nav-link text-dark" asp-area="User" asp-controller="Task" asp-action="Index">Task</a>
                         </li>
+                        @if (User != null && User.IsInRole("admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Management" asp-action="Index">ManagementController</a>
+                            </li>
+                        }
                     </ul>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>

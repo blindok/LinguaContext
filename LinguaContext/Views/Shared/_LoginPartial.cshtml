@@ -1,0 +1,21 @@
+﻿<ul class="navbar-nav">
+
+@if (User != null && User.Identity.IsAuthenticated)
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark">Hello, @User.FindFirst("email")!</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-controller="Authentication" asp-action="Logout">Log Out</a>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-controller="Authentication" asp-action="Register">Register</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-controller="Authentication" asp-action="Login">Login</a>
+    </li>
+}
+</ul>

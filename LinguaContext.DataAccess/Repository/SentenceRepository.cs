@@ -45,8 +45,19 @@ public class SentenceRepository : Repository<Sentence>, ISentenceRepository
         _dbSet.Add(sentence);
     }
 
-    public void AddSentenceFromContext(Sentence sentence, int ContextId, int SentencePosition, string? comment = null)
+    public void AddSentenceFromContext(Sentence sentence, int UserId, int ContextId, int SentencePosition, string? comment = null)
     {
-
+        UserSentenceInfo info = new UserSentenceInfo
+        {
+            UserId = UserId,
+            CreatedAt = DateTime.Now,
+            LastEditedAt = DateTime.Now,
+            Comment = comment,
+            SourceContextId = ContextId,
+            PositionInText = SentencePosition
+        };
+        var infoFromDb = _dbSetUserSentences.Add(info);
+        sentence.UserSentenceInfoId = infoFromDb.Entity.UserSentenceInfoId;
+        _dbSet.Add(sentence);
     }
 }

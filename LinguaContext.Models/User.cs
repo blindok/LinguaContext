@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using LinguaContext.Utility;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
@@ -8,29 +9,35 @@ namespace LinguaContext.Models;
 public class User
 {
     [Key]
-    public int UserId { get; set; }
+    public int Id { get; set; }
 
     [Required, NotNull]
     [MaxLength(35)]
-    [DisplayName("User Name")]
+    [DisplayName("Никнейм")]
     public string UserName { get; set; }
 
     [Required, NotNull]
-    [DisplayName("Email")]
+    [DisplayName("Почта")]
     public string Email { get; set; }
 
     [Required, NotNull]
     [MaxLength(35)]
-    [DisplayName("First Name")]
+    [DisplayName("Имя")]
     public string FirstName { get; set; }
 
     [MaxLength(35)]
-    [DisplayName("Last Name")]
+    [DisplayName("Фамилия")]
     public string? LastName { get; set; }
 
     [Required, NotNull]
-    [DisplayName("Birth Day")]
-    public DateOnly BirthDay { get; set; }
+    [DisplayName("День Рождения")]
+    public DateOnly? BirthDay { get; set; }
+
+    [Required, NotNull]
+    public string Role { get; set; } = SD.Role_User;
+
+    [Required]
+    public string PasswordHash { get; set; }
 
     [ValidateNever]
     public PersonalFactors? Factors { get; set; }

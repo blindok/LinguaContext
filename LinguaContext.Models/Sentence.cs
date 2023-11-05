@@ -17,6 +17,11 @@ public class Sentence
     [DisplayName("Sentence")]
     public string Phrase { get; set; }
 
+    [Required, NotNull]
+    [MaxLength(200)]
+    [DisplayName("Formatted Sentence")]
+    public string FormattedPhrase { get; set; }
+
     [MaxLength(200)]
     [DisplayName("Translation")]
     public string Translation { get; set; }
