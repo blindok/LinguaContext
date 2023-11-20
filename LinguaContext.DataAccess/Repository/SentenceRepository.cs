@@ -16,13 +16,13 @@ public class SentenceRepository : Repository<Sentence>, ISentenceRepository
 
     public IEnumerable<Sentence> GetAllUsersSentences()
     {
-        IQueryable<Sentence> sentences = _dbSet.Where(o => o.UserSentenceInfoId != null);
+        IQueryable<Sentence> sentences = _dbSet;//.Where(o => o.UserSentenceInfoId != null);
         return sentences;
     }
 
     public IEnumerable<Sentence> GetAllBuiltInSentences()
     {
-        IQueryable<Sentence> sentences = _dbSet.Where(o => o.UserSentenceInfoId == null);
+        IQueryable<Sentence> sentences = _dbSet;//.Where(o => o.UserSentenceInfoId == null);
         return sentences;
     }
 
@@ -41,7 +41,7 @@ public class SentenceRepository : Repository<Sentence>, ISentenceRepository
             Comment = comment
         };
         var infoFromDb = _dbSetUserSentences.Add(info);
-        sentence.UserSentenceInfoId = infoFromDb.Entity.UserSentenceInfoId;
+        //sentence.UserSentenceInfoId = infoFromDb.Entity.UserSentenceInfoId;
         _dbSet.Add(sentence);
     }
 
@@ -54,10 +54,15 @@ public class SentenceRepository : Repository<Sentence>, ISentenceRepository
             LastEditedAt = DateTime.Now,
             Comment = comment,
             SourceContextId = ContextId,
-            PositionInText = SentencePosition
+            //PositionInText = SentencePosition
         };
         var infoFromDb = _dbSetUserSentences.Add(info);
-        sentence.UserSentenceInfoId = infoFromDb.Entity.UserSentenceInfoId;
+        //sentence.UserSentenceInfoId = infoFromDb.Entity.UserSentenceInfoId;
         _dbSet.Add(sentence);
+    }
+
+    public Sentence GetRandomSentence()
+    {
+        return _dbSet.OrderBy(r => EF.Functions.Random()).FirstOrDefault()!;
     }
 }

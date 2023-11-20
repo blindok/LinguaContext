@@ -2,7 +2,9 @@
 
 public interface IUnitOfWork
 { 
-    ISentenceRepository Sentence { get; }
+    IUserRepository         Users       { get; }
+    ISentenceRepository     Sentences   { get; }
+    IUserTaskRepository     UserTasks { get; }
 
     void Save();
 }

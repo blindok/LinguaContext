@@ -24,8 +24,17 @@ public class UserSentenceInfo
     [DisplayName("Last Time Edited")]
     public DateTime LastEditedAt { get; set; }
 
-    [DisplayName("Position in Source Text")]
-    public int? PositionInText { get; set; }
+    [DisplayName("Start Position in Source Text")]
+    public int? StartPositionInText { get; set; }
+
+    [DisplayName("End Position in Source Text")]
+    public int? EndPositionInText { get; set; }
+
+    [DisplayName("Number of answer words")]
+    public int? WordCounter { get; set; }
+
+    [DisplayName("Word Position in Source Text")]
+    public int? WordPositionInText { get; set; }
 
     [DisplayName("Additional Information")]
     public string? Comment { get; set; }

@@ -14,33 +14,6 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme,
-        new OpenApiSecurityScheme()
-        {
-            Name = "token",
-            Type = SecuritySchemeType.Http,
-            Scheme = JwtBearerDefaults.AuthenticationScheme,
-            In = ParameterLocation.Cookie,
-            BearerFormat = "JWT",
-            Description = "JWT Authorization header"
-        });
-    //options.AddSecurityRequirement(new OpenApiSecurityRequirement {
-    //    {
-    //        new OpenApiSecurityScheme
-    //        {
-    //            Reference = new OpenApiReference
-    //            {
-    //                Type = ReferenceType.SecurityScheme,
-    //                Id = JwtBearerDefaults.AuthenticationScheme
-    //            }
-    //        },
-    //        new string[] { "" }
-    //    }
-    //});
-});
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -73,17 +46,12 @@ builder.Services.AddAuthentication(options =>
         };
 
     });
-    //builder.Services.AddAuthorization();
-    //builder.Services.AddAuthorization(options =>
-    //{
-    //    options.AddPolicy(IdentityData.AdminPolicyName, p =>
-    //    p.RequireClaim(IdentityData.AdminClaimName, "true"));
-    //});
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
 });
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 

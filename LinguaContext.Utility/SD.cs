@@ -10,8 +10,12 @@ public static class SD
     public const string Role_User = "user";
 }
 
-public static class IdentityData
+public static class DefaultSettings
 {
-    public const string AdminClaimName = "admin";
-    public const string AdminPolicyName = "Admin";
+    public const int NewDailyCardsNumber = 20;
+
+    public const double IntervalModifier = 1.0;
+    public const double FailIntervalModifier = 0.0;
+    public const double HardIntervalModifier = 1.2;
+    public const double EasyIntervalModifier = 1.3;
 }

@@ -1,9 +1,7 @@
 ﻿using LinguaContext.DataAccess.Repository.Interfaces;
 using LinguaContext.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using Microsoft.AspNetCore.Mvc;
 
 namespace LinguaContext.DataAccess.Repository;
 
@@ -30,8 +28,7 @@ public class Repository<T> : IRepository<T> where T : class
 
     public T? GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null)
     {
-        IQueryable<T> query = _dbSet;
-        query.Where(filter);
+        IQueryable<T> query = _dbSet.Where(filter);
 
         if (!string.IsNullOrEmpty(includeProperties))
             IncludeProperties(query, includeProperties);

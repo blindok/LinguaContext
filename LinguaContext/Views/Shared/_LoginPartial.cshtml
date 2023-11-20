@@ -1,21 +1,33 @@
-﻿<ul class="navbar-nav">
+﻿@using System.Security.Claims;
+<ul class="navbar-nav" role="tablist">
 
-@if (User != null && User.Identity.IsAuthenticated)
+@if (User != null && User.Identity!.IsAuthenticated)
 {
-    <li class="nav-item">
-        <a class="nav-link text-dark">Hello, @User.FindFirst("email")!</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-controller="Authentication" asp-action="Logout">Log Out</a>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle"></i>@User.FindFirst("name")!.Value
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+                <a asp-area="User" asp-controller="PersonalPage" asp-action="Account" asp-route-id="@User.FindFirst("userid")!.Value" class="dropdown-item">Мой Аккаунт</a>
+            </li>
+            <li>
+                <a asp-area="User" asp-controller="PersonalPage" asp-action="UpdatePersonalInfo" asp-route-id="@User.FindFirst("userid")!.Value" class="dropdown-item">Настойки</a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <a asp-area="Identity" asp-controller="Authentication" asp-action="Logout" class="dropdown-item">Выйти</a>
+            </li>
+        </ul>
     </li>
 }
 else
 {
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-controller="Authentication" asp-action="Register">Register</a>
+        <a class="nav-link" asp-area="Identity" asp-controller="Authentication" asp-action="Register">Регистрация</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-controller="Authentication" asp-action="Login">Login</a>
+        <a class="nav-link" asp-area="Identity" asp-controller="Authentication" asp-action="Login">Вход</a>
     </li>
 }
 </ul>

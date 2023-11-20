@@ -6,25 +6,23 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using LinguaContext.Utility;
-using LinguaContext.DataAccess.Data;
-using Microsoft.AspNetCore.Identity;
-using LinguaContext.Models;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Options;
+using LinguaContext.DataAccess.Repository.Interfaces;
 
 namespace LinguaContext.Areas.Identity.Controllers;
 
 [Area("Identity")]
 public class AuthenticationController : Controller
 {
-    private readonly ApplicationDbContext _db;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IConfiguration _config;
+    private readonly ILogger<AuthenticationController> _logger;
 
-    public AuthenticationController(ApplicationDbContext db, IConfiguration config)
+    public AuthenticationController(IUnitOfWork unitOfWork, IConfiguration config, ILogger<AuthenticationController> logger)
     {
-        _db = db;
+        _unitOfWork = unitOfWork;
         _config = config;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -42,8 +40,18 @@ public class AuthenticationController : Controller
     {
         string passpordHash = BCrypt.Net.BCrypt.HashPassword(registerVM.Password);
         registerVM.User.PasswordHash = passpordHash;
-        _db.Users.Add(registerVM.User);
-        _db.SaveChanges();
+
+        try
+        {
+            _unitOfWork.Users.Add(registerVM.User);
+            _unitOfWork.Save();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return View("Register");
+        }
+
         return RedirectToAction("Login");
     }
 
@@ -57,7 +65,7 @@ public class AuthenticationController : Controller
     [HttpPost]
     public IActionResult Login(LoginVM loginVM)
     {
-        var user = _db.Users.FirstOrDefault(u => u.Email ==  loginVM.Email);
+        var user = _unitOfWork.Users.GetFirstOrDefault(u => u.Email == loginVM.Email);
 
         if (user == null) 
         {
@@ -91,6 +99,7 @@ public class AuthenticationController : Controller
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Sub, request.Email),
             new Claim(JwtRegisteredClaimNames.Email, request.Email),
+            new Claim(JwtRegisteredClaimNames.Name, request.UserName),
             new Claim(ClaimTypes.Role, request.Role),
             new Claim("userid", request.UserId.ToString())
         };
@@ -134,6 +143,7 @@ public class AuthenticationController : Controller
         {
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+            new Claim(JwtRegisteredClaimNames.Name, user.UserName),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(ClaimTypes.Role, user.Role),
             new Claim("userid", user.Id.ToString())
@@ -176,10 +186,21 @@ public class AuthenticationController : Controller
         var request = new TokenGenerationRequest
         {
             Email = "test@test.com",
+            UserName = "test",
             UserId = 333,
             Role = SD.Role_Admin,
         };
 
         return Ok(request);
+    }
+
+    public JsonResult IsUserNameExists(string UserName)
+    {
+        return Json(_unitOfWork.Users.GetFirstOrDefault(x => x.UserName == UserName), System.Web.Mvc.JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult IsEmailExists(string Email)
+    {
+        return Json(_unitOfWork.Users.GetFirstOrDefault(x => x.Email == Email), System.Web.Mvc.JsonRequestBehavior.AllowGet);
     }
 }
