@@ -8,7 +8,7 @@
     <div class="col-md-3"></div>
     <div class="col-md-6">
         <div class="card p-3">
-            <form id="answerForm" method="post" enctype="multipart/form-data">
+            <form id="answerForm" autocomplete="off"  method="post" enctype="multipart/form-data">
                 <div>
                     <input asp-for="@Model.Sentence.SentenceId" hidden />
                     <input asp-for="@Model.Sentence.Phrase" hidden />
@@ -39,10 +39,10 @@
                                 <span class="h2">@chunks[i]</span>
                                 int width = Model.Sentence.Answer.Length * 25;
                                 <span style="display: inline-block; width: @{@width}px;">
-                                <input asp-for="@Model.Answer![i]" id="answerInput" class="form-control h2" />
+                                <input asp-for="@(Model.Answer[i])" id="answerInput" class="form-control h2" />
                                 </span>
                         }
-                        <span class="h2">@chunks[Model.WordsNumber]</span>
+                            <span class="h2">@chunks[Model.WordsNumber]</span>
                     }
                 </div>
                 <div class="text-center mt-5" id="answerDiv" style="display: none">
@@ -50,6 +50,12 @@
                 </div>
                 <div class="text-center">
                     <p class="h5 text-muted">@Model.Sentence.Translation</p>
+                </div>
+
+                <div id="resultDiv" class="row text-center" >
+                    <p class="h5 text-success" id="resultDiv1" style="display: none">@Model.Sentence.Answer</p>
+                    <p class="h5 text-primary" id="resultDiv3" style="display: none">-></p>
+                    <p class="h5 text-danger" id="resultDiv2" style="display: none"></p>
                 </div>
 
                 <div class="row mt-5" id="submitButtonDiv">
@@ -90,7 +96,20 @@
         document.getElementById("submitButtons").style.display = 'flex';
         document.getElementById("submitButtonDiv").style.display = 'none';
         document.getElementById("answerDiv").style.display = 'block';
+        document.getElementById("resultDiv").style.display = 'block';
         document.getElementById("taskDiv").style.display = 'none';
+
+        document.getElementById("resultDiv2").innerHTML = document.getElementById('answerInput').value;
+        document.getElementById("resultDiv1").style.display = 'inline';
+        document.getElementById("resultDiv2").style.display = 'inline';
+        document.getElementById("resultDiv3").style.display = 'inline';
+
+        if (document.getElementById('answerInput').value == @Model.Sentence.Answer) {
+            document.getElementById("resultDiv1").style.display = 'block';
+        }
+        else {
+            document.getElementById("resultDiv2").style.display = 'block';
+        }
     }
 
     const form = document.getElementById('answerForm');

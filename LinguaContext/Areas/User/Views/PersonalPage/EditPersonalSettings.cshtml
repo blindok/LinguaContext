@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Персональные Настройки Тренировок";
+}
+
+<div class="row pt-5">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-5">
+        <form method="post" autocomplete="off" enctype="multipart/form-data" class="px-5">
+            @* <input asp-for="UserId" hidden>
+            <input asp-for="PersonalFactorsId" hidden> *@
+            <fieldset class="form-group px-5 mb-4">
+                <legend class="mt-4">Custom Modifiers</legend>
+                <div class="row mb-3">
+                    <label  for="customRange1" class="form-label"></label>
+                    <input type="range" min="0.0" max="3.0" step="0.1" list="markers" class="form-range" id="IntervalModifier" oninput="num1.value = this.value">
+                </div>
+            </fieldset>
+            <div class="row px-5">
+                <button type="submit" class="btn border border-dark btn-outline-secondary form-control">Сохранить изменения</button>
+            </div>
+        </form>
+    </div>
+    <partial name="_SettingsSideBarPartial" />
+</div>

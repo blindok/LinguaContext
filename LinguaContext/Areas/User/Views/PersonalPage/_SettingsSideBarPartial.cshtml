@@ -7,21 +7,21 @@
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-                <a asp-controller="PersonalPage" asp-action="UpdatePersonalInfo" asp-route-id="@User.FindFirst("userid")!.Value" class="nav-link active" aria-current="page">
+                <a id="PersonalInfo" asp-controller="PersonalPage" asp-action="UpdatePersonalInfo" asp-route-id="@User.FindFirst("userid")!.Value" class="nav-link @(ViewData["action"]!.ToString()=="PersonalInfo" ? "active" : "link-dark")" aria-current="page">
                     <svg class="bi" width="16" height="16"><use xlink:href="#home"></use></svg>
                     Персональные Данные
                 </a>
             </li>
             <li class="nav-item">
-                <a asp-controller="PersonalPage" asp-action="EditPersonalFactors" asp-route-id="@User.FindFirst("userid")!.Value" class="nav-link link-dark">
-                    <svg class="bi" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
-                    Интервальное повторение
+                <a id="PersonalSettings" asp-controller="PersonalPage" asp-action="EditPersonalSettings" asp-route-id="@User.FindFirst("userid")!.Value" class="nav-link @(ViewData["action"]!.ToString()=="PersonalSettings" ? "active" : "link-dark")">
+                    <svg class="bi" width="16" height="16"><use xlink:href="#table"></use></svg>
+                    Тренировки
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link link-dark">
-                    <svg class="bi" width="16" height="16"><use xlink:href="#table"></use></svg>
-                    Тренировки
+                <a id="PersonalFactors" asp-controller="PersonalPage" asp-action="EditPersonalFactors" asp-route-id="@User.FindFirst("userid")!.Value" class="nav-link @(ViewData["action"]!.ToString()=="PersonalFactors" ? "active" : "link-dark")">
+                    <svg class="bi" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                    Интервальное повторение
                 </a>
             </li>
             <li>
@@ -35,11 +35,4 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        var url = window.location;
-        $('ul.nav a[href="' + url + '"]').parent().addClass('active');
-        $('ul.nav a').filter(function () {
-            return this.href == url;
-        }).parent().addClass('active');
-    });
 </script>

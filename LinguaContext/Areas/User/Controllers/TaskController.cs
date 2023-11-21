@@ -3,8 +3,6 @@ using LinguaContext.Models;
 using LinguaContext.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 
 namespace LinguaContext.Areas.User.Controlles;
 
@@ -22,7 +20,18 @@ public class TaskController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        return View();
+        TrainingSettingsVM model = new()
+        {
+            Settings = new()
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    public IActionResult Index(int id, TrainingSettingsVM model)
+    {
+        return RedirectToAction(model.TrainingType, new { id = id});
     }
 
     [HttpGet]

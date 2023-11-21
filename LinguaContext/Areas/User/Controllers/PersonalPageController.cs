@@ -47,6 +47,7 @@ public class PersonalPageController : Controller
     public IActionResult UpdatePersonalInfo(int id) 
     {
         var user = _unitOfWork.Users.GetFirstOrDefault(x => x.Id == id);
+        ViewData["action"] = "PersonalInfo";
         //if (CurrentUser == null) CurrentUser = _unitOfWork.Users.GetFirstOrDefault(x => x.Id == id);
         return View(user);
     }
@@ -98,6 +99,7 @@ public class PersonalPageController : Controller
             personalFactors.UserId = id;
         }
 
+        ViewData["action"] = "PersonalFactors";
         return View(personalFactors);
     }
 
@@ -128,5 +130,12 @@ public class PersonalPageController : Controller
         _unitOfWork.Save();
 
         return View(factors);
+    }
+
+    [HttpGet]
+    public IActionResult EditPersonalSettings(int id)
+    {
+        ViewData["action"] = "PersonalSettings";
+        return View();
     }
 }

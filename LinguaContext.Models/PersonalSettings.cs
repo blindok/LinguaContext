@@ -13,6 +13,7 @@ public class PersonalSettings
 
     public int UserId { get; set; }
 
+    [Range(0, 50)]
     public int NewDailyCardsNumber { get; set; } = DefaultSettings.NewDailyCardsNumber;
 
     [ForeignKey("UserId")]

@@ -1,4 +1,6 @@
-﻿@{
+﻿@model TrainingSettingsVM
+
+@{
     ViewData["Title"] = "Тренировки";
 }
 
@@ -8,15 +10,61 @@
         <div class="col-md-4"></div>
         <div class="col-md-4">
             <div class="my-3">
-                <a asp-controller="Task" asp-action="StandardTraining" asp-route-id="@User.FindFirst("userid")!.Value" class="btn btn-primary btn-lg form-control">Стандартная тренировка</a>
+                <button id="standartBTN" onclick="Redirect('StandardTraining')" class="btn btn-primary btn-lg form-control">Стандартная тренировка</button>
+                @* <a asp-controller="Task" asp-action="StandardTraining" asp-route-id="@User.FindFirst("userid")!.Value" id="standartBTN" name="TrainingType" value="StandardTraining" class="btn btn-primary btn-lg form-control">Стандартная тренировка</a> *@
             </div>
             <div class="my-3">
-                <a asp-controller="Task" asp-action="" asp-route-id="@User.FindFirst("userid")!.Value" class="btn btn-primary btn-lg form-control">Кастомная тренировка</a>
+                <button id="customBTN" @* onclick="Redirect('CustomTraining')" *@ class="btn btn-primary btn-lg form-control">Кастомная тренировка</button>
+                @* <a asp-controller="Task" asp-action="StandardTraining" asp-route-id="@User.FindFirst("userid")!.Value" name="TrainingType" value="CustomTraining" class="btn btn-primary btn-lg form-control">Кастомная тренировка</a> *@
             </div>
             <div class="my-3">
-                <a asp-controller="Task" asp-action="" asp-route-id="@User.FindFirst("userid")!.Value" class="btn btn-primary btn-lg form-control">Смешанная тренировка</a>
+                <button id="BTN" @* onclick="Redirect('CustomTraining')" *@ class="btn btn-primary btn-lg form-control">Смешанная тренировка</button>
+                @* <a asp-controller="Task" asp-action="StandardTraining" asp-route-id="@User.FindFirst("userid")!.Value" name="TrainingType" value="3" class="btn btn-primary btn-lg form-control">Смешанная тренировка</a> *@
             </div>
         </div>
         <div class="col-md-4"></div>
     </div>
 </div>
+
+<div id="popupBack" class="bg-primary text-center" style="opacity: 0.65; display: none; width: 100%; height: 100%;position: absolute; top: 0; left: 0;">
+</div>
+<div id="popup" class="bg-transparent" style="display: none; width: 100%; height: 100%;position: absolute; top: 0; left: 0;">
+    <div class="card" style="width:20%; left:40%; top: 30%" >
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-6 text-start">
+                    <p class="h5">Настройки</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button id="closeBtn" type="button" class="btn btn-close btn-close-white"  data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <form method="post" asp-controller="Task" asp-action="Index" asp-route-id="@User.FindFirst("userid")!.Value" enctype="multipart/form-data">
+                <input id="input" asp-for="TrainingType" class="form-control" hidden/>
+                <div class="form-control border-0 col-md-6">
+                    <label asp-for="Settings.NewDailyCardsNumber" class="ms-2 text-muted">Кол-во новых слов: </label>
+                    <input asp-for="Settings.NewDailyCardsNumber" class="form-control" placeholder="" />
+                    <span asp-validation-for="Settings.NewDailyCardsNumber" class="text-danger"></span>
+                </div>
+                <div class="row px-5 mb-3">
+                    <button type="submit" class="btn btn-dark">Начать тренировку</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function Redirect(value) {
+        document.getElementById("popupBack").style.display = 'block';
+        document.getElementById("popup").style.display = 'block';
+        document.getElementById("input").value = value;
+    };
+
+    document.getElementById("closeBtn").onclick = function () {
+        document.getElementById("popupBack").style.display = 'none';
+        document.getElementById("popup").style.display = 'none';
+    };
+</script>
