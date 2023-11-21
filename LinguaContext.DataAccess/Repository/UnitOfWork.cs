@@ -11,7 +11,7 @@ public class UnitOfWork : IUnitOfWork
 {
     public IUserRepository          Users       { get; private set; }
     public ISentenceRepository      Sentences   { get; private set; }
-    public IUserTaskRepository      UserTasks { get; private set; }
+    public IUserTaskRepository      Tasks       { get; private set; }
 
     private readonly ApplicationDbContext _db;
     private readonly ILogger<UnitOfWork> _logger;
@@ -22,7 +22,7 @@ public class UnitOfWork : IUnitOfWork
         _logger   = logger;
         Users     = new UserRepository(_db);
         Sentences = new SentenceRepository(_db);
-        UserTasks = new UserTaskRepository(_db);
+        Tasks     = new UserTaskRepository(_db);
     }
 
     public void Save()

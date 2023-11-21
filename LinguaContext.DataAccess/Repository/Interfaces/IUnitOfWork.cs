@@ -4,7 +4,7 @@ public interface IUnitOfWork
 { 
     IUserRepository         Users       { get; }
     ISentenceRepository     Sentences   { get; }
-    IUserTaskRepository     UserTasks { get; }
+    IUserTaskRepository     Tasks       { get; }
 
     void Save();
 }

@@ -8,13 +8,41 @@ public class UserTaskRepository : Repository<UserTask>, IUserTaskRepository
 {
     public UserTaskRepository(ApplicationDbContext db) : base(db) { }
 
-    public void CreateUserTask(int userId, int taskId)
+    public UserTask CreateUserTask(int userId, int sentenceId)
     {
-        throw new NotImplementedException();
+        return new UserTask()
+        {
+            UserId      = userId,
+            SentenceId  = sentenceId,
+            FirstReview = DateTime.Now,
+            LastReview  = DateTime.Now,
+            NextReview  = DateTime.Now,
+        };
+    }
+
+    public UserTask CreateUserTask(User user, Sentence sentence)
+    {
+        return new UserTask()
+        {
+            UserId      = user.Id,
+            SentenceId  = sentence.SentenceId,
+            FirstReview = DateTime.Now,
+            LastReview  = DateTime.Now,
+            NextReview  = DateTime.Now,
+            User        = user,
+            Sentence    = sentence
+        };
     }
 
     public UserTask? GetNextUserTaskByUserId(int UserId)
     {
         throw new NotImplementedException();
+    }
+
+    public bool IsAlreadyLearnt(int userId, int senteceId)
+    {
+        UserTask? task = GetFirstOrDefault(t => t.UserId == userId && t.SentenceId == senteceId);
+        if (task == null) return true;
+        return false;
     }
 }

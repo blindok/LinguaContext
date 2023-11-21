@@ -14,7 +14,7 @@
         <form asp-controller="Authentication" asp-action="Register" method="post" class="row pt-3" enctype="multipart/form-data">
             <input asp-for="@Model.User.Id" hidden>
             <div class="form-floating mb-4 col-md-6">
-                <input asp-for="User.Email" class="form-control" aria-required="true" placeholder="" />
+                <input type="email" asp-for="User.Email" class="form-control" aria-required="true" placeholder="" />
                 <label asp-for="User.Email" class="ms-2 text-muted">Почта</label>
                 <span asp-validation-for="User.Email" class="text-danger"></span>
             </div>
@@ -29,7 +29,7 @@
                 <span asp-validation-for="User.Name" class="text-danger"></span>
             </div>
             <div class="form-floating mb-4 col-md-6">
-                <input asp-for="User.BirthDay" class="form-control" placeholder="" />
+                <input type="date" asp-for="User.BirthDay" class="form-control" placeholder="" min="1900-01-01" max="2013-12-31" />
                 <label asp-for="User.BirthDay" class="ms-2 text-muted">День Рождения</label>
                 <span asp-validation-for="User.BirthDay" class="text-danger"></span>
             </div>

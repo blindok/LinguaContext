@@ -13,7 +13,7 @@ public class PersonalPageController : Controller
     private readonly IUnitOfWork _unitOfWork;
     private readonly IWebHostEnvironment _webHostEnvironment;
 
-    private static Models.User? CurrentUser { get; set; } = null;
+    //private static Models.User? CurrentUser { get; set; } = null;
 
     public PersonalPageController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
     {
@@ -28,11 +28,11 @@ public class PersonalPageController : Controller
 
         if (user == null)
         {
-            CurrentUser = null;
+            //CurrentUser = null;
             return RedirectToAction("Login", "Authentication", new { Area = "Identity" });
         }
 
-        CurrentUser = user;
+        //CurrentUser = user;
 
         return View(user);
     }
@@ -46,11 +46,9 @@ public class PersonalPageController : Controller
     [HttpGet]
     public IActionResult UpdatePersonalInfo(int id) 
     {
-        if (CurrentUser == null)
-        {
-            CurrentUser = _unitOfWork.Users.GetFirstOrDefault(x => x.Id == id);
-        }
-        return View(CurrentUser);
+        var user = _unitOfWork.Users.GetFirstOrDefault(x => x.Id == id);
+        //if (CurrentUser == null) CurrentUser = _unitOfWork.Users.GetFirstOrDefault(x => x.Id == id);
+        return View(user);
     }
 
     [HttpPost]
@@ -80,18 +78,17 @@ public class PersonalPageController : Controller
 
             user.AvatarUrl = @"\images\avatars\" + fileName;
         }
+
         _unitOfWork.Users.Update(user);
         _unitOfWork.Save();
+
         return RedirectToAction("Account", new { id = user.Id });
     }
 
     [HttpGet]
     public IActionResult EditPersonalFactors(int id)
     {
-        if (CurrentUser == null)
-        {
-            CurrentUser = _unitOfWork.Users.GetFirstOrDefault(x => x.Id == id);
-        }
+        //if (CurrentUser == null) CurrentUser = _unitOfWork.Users.GetFirstOrDefault(x => x.Id == id);
 
         var personalFactors = _unitOfWork.Users.GetPersonalFactorsByUserId(id);
 

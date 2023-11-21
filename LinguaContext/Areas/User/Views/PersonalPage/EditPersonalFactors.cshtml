@@ -3,23 +3,23 @@
 <div class="row pt-5">
     <div class="col-md-3">
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
         <form method="post" enctype="multipart/form-data" class="px-5">
             <input asp-for="UserId" hidden>
             <input asp-for="PersonalFactorsId" hidden>
             <fieldset class="form-group px-5 mb-4">
                 <legend class="mt-4">Custom Modifiers</legend>
-                <div class="row">
+                <div class="row mb-3">
                     <label asp-for="IntervalModifier" for="customRange1" class="form-label"></label>
                     <input asp-for="IntervalModifier" type="range" min="0.0" max="3.0" step="0.1" list="markers" class="form-range" id="IntervalModifier" oninput="num1.value = this.value">
                     <output id="num1" class="text-center">@Model.IntervalModifier</output>
                 </div>
-                <div class="row">
+                <div class="row mb-3">
                     <label asp-for="FailIntervalModifier" for="customRange1" class="form-label"></label>
                     <input asp-for="FailIntervalModifier" type="range" min="0.0" max="3.0" step="0.1" class="form-range" id="FailIntervalModifier" oninput="num2.value = this.value">
                     <output id="num2" class="text-center">@Model.FailIntervalModifier</output>
                 </div>
-                <div class="row">
+                <div class="row mb-3">
                     <label asp-for="HardIntervalModifier" for="customRange1" class="form-label"></label>
                     <input asp-for="HardIntervalModifier" type="range" min="0.0" max="3.0" step="0.1" class="form-range" id="HardIntervalModifier" oninput="num3.value = this.value">
                     <output id="num3" class="text-center">@Model.HardIntervalModifier</output>
@@ -35,7 +35,5 @@
             </div>
         </form>
     </div>
-    <div class="col-md-3">
-        <partial name="_SettingsSideBarPartial" />
-    </div>
+    <partial name="_SettingsSideBarPartial" />
 </div>

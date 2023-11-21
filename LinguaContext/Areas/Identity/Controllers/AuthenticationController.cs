@@ -69,12 +69,14 @@ public class AuthenticationController : Controller
 
         if (user == null) 
         {
-            return BadRequest("Wrong login or passport!");
+            ModelState.AddModelError(String.Empty, "Wrong login or passport!");
+            return View();
         }
 
         if (!BCrypt.Net.BCrypt.Verify(loginVM.Password, user.PasswordHash))
         {
-            return BadRequest("Wrong login or passport!");
+            ModelState.AddModelError(String.Empty, "Wrong login or passport!");
+            return View();
         }
 
         string token2 = GenerateTokenString(user);
@@ -194,13 +196,13 @@ public class AuthenticationController : Controller
         return Ok(request);
     }
 
-    public JsonResult IsUserNameExists(string UserName)
-    {
-        return Json(_unitOfWork.Users.GetFirstOrDefault(x => x.UserName == UserName), System.Web.Mvc.JsonRequestBehavior.AllowGet);
-    }
+    //public JsonResult IsUserNameExists(string UserName)
+    //{
+    //    return Json(_unitOfWork.Users.GetFirstOrDefault(x => x.UserName == UserName), System.Web.Mvc.JsonRequestBehavior.AllowGet);
+    //}
 
-    public JsonResult IsEmailExists(string Email)
-    {
-        return Json(_unitOfWork.Users.GetFirstOrDefault(x => x.Email == Email), System.Web.Mvc.JsonRequestBehavior.AllowGet);
-    }
+    //public JsonResult IsEmailExists(string Email)
+    //{
+    //    return Json(_unitOfWork.Users.GetFirstOrDefault(x => x.Email == Email), System.Web.Mvc.JsonRequestBehavior.AllowGet);
+    //}
 }

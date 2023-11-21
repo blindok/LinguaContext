@@ -1,33 +1,45 @@
-﻿<div class="d-flex flex-column flex-shrink-0 p-3 bg-light mt-2" style="width: 300px;">
-    <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-        <span class="fs-4">Настройки</span>
-    </a>
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
-        <li class="nav-item">
-            <a asp-controller="PersonalPage" asp-action="UpdatePersonalInfo" asp-route-id="@User.FindFirst("userid")!.Value" class="nav-link active" aria-current="page">
-                <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
-                Персональные Данные
-            </a>
-        </li>
-        <li>
-            <a asp-controller="PersonalPage" asp-action="EditPersonalFactors" asp-route-id="@User.FindFirst("userid")!.Value" class="nav-link link-dark">
-                <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
-                Интервальное повторение
-            </a>
-        </li>
-        <li>
-            <a href="#" class="nav-link link-dark">
-                <svg class="bi me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
-                Тренировки
-            </a>
-        </li>
-        <li>
-            <a href="#" class="nav-link link-dark">
-                <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-                Предложения
-            </a>
-        </li>
-    </ul>
+﻿<div class="col-md-4">
+    <div class="d-flex flex-column flex-shrink-0 p-3 bg-light mt-2" style="width: 80%;">
+        <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+            <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+            <span class="fs-4">Настройки</span>
+        </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a asp-controller="PersonalPage" asp-action="UpdatePersonalInfo" asp-route-id="@User.FindFirst("userid")!.Value" class="nav-link active" aria-current="page">
+                    <svg class="bi" width="16" height="16"><use xlink:href="#home"></use></svg>
+                    Персональные Данные
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-controller="PersonalPage" asp-action="EditPersonalFactors" asp-route-id="@User.FindFirst("userid")!.Value" class="nav-link link-dark">
+                    <svg class="bi" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                    Интервальное повторение
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link link-dark">
+                    <svg class="bi" width="16" height="16"><use xlink:href="#table"></use></svg>
+                    Тренировки
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link link-dark">
+                    <svg class="bi" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                    Предложения
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var url = window.location;
+        $('ul.nav a[href="' + url + '"]').parent().addClass('active');
+        $('ul.nav a').filter(function () {
+            return this.href == url;
+        }).parent().addClass('active');
+    });
+</script>

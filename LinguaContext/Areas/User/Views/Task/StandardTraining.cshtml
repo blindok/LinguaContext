@@ -1,9 +1,127 @@
-﻿@model Sentence
+﻿@model StandardTrainingVM
 
 @{
     ViewData["Title"] = "Тренировка";
 }
 
-<div class="text-center">
-    <p class="h3">@Model.Phrase</p>
-</dic>
+<div class="row mt-5">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <div class="card p-3">
+            <form id="answerForm" method="post" enctype="multipart/form-data">
+                <div>
+                    <input asp-for="@Model.Sentence.SentenceId" hidden />
+                    <input asp-for="@Model.Sentence.Phrase" hidden />
+                    <input asp-for="@Model.Sentence.FormattedPhrase" hidden />
+                    <input asp-for="@Model.Sentence.Translation" hidden />
+                    <input asp-for="@Model.Sentence.Answer" hidden />
+                    <input asp-for="@Model.Sentence.AnswerTranslation" hidden />
+                    <input asp-for="@Model.Sentence.ComplexityLevel" hidden />
+                    <input asp-for="@Model.Task.UserId" hidden />
+                    <input asp-for="@Model.Task.SentenceId" hidden />
+                    <input asp-for="@Model.Task.FirstReview" hidden />
+                    <input asp-for="@Model.Task.LastReview" hidden />
+                    <input asp-for="@Model.Task.NextReview" hidden />
+                    <input asp-for="@Model.Task.RepetitionNumber" hidden />
+                    <input asp-for="@Model.Task.CurrentInterval" hidden />
+                    <input asp-for="@Model.Task.EaseFactor" hidden />
+                    <input asp-for="@Model.WordsNumber" hidden />
+                    <input asp-for="@Model.Answer[0]" hidden />
+                </div>
+
+                <div class="text-center mt-5" id="taskDiv">
+                    @{
+                        var chunks = Model.Sentence.FormattedPhrase.Split('~');
+                        var words = Model.Sentence.Answer.Split("~");
+
+                        for (int i = 0; i < Model.WordsNumber; ++i)
+                        {
+                                <span class="h2">@chunks[i]</span>
+                                int width = Model.Sentence.Answer.Length * 25;
+                                <span style="display: inline-block; width: @{@width}px;">
+                                <input asp-for="@Model.Answer![i]" id="answerInput" class="form-control h2" />
+                                </span>
+                        }
+                        <span class="h2">@chunks[Model.WordsNumber]</span>
+                    }
+                </div>
+                <div class="text-center mt-5" id="answerDiv" style="display: none">
+                    <p class="h2">@Model.Sentence.Phrase</p>
+                </div>
+                <div class="text-center">
+                    <p class="h5 text-muted">@Model.Sentence.Translation</p>
+                </div>
+
+                <div class="row mt-5" id="submitButtonDiv">
+                    <div class="col-md-3" id="sec"></div>
+                    <div class="col-md-6">
+                        <button type="button" id="submitButton" class="btn border border-dark btn-secondary form-control">Ответить</button>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+                
+                <div class="row mt-5" id="submitButtons" style="display: none">
+                    <div class="col-md-3" id="btn1" >
+                        <button id="fail" name="ButtonValue" value="1" type="submit" class="btn border border-dark btn-danger form-control">Повтор / 1</button>
+                    </div>
+                    <div class="col-md-3" id="btn2" >
+                        <button id="hard" name="ButtonValue" value="2" type="submit" class="btn border border-dark btn-warning form-control">Тяжело / 2</button>
+                    </div>
+                    <div class="col-md-3" id="btn3">
+                        <button id="good" name="ButtonValue" value="3" type="submit" class="btn border border-dark btn-info form-control">Хорошо / 3</button>
+                    </div>
+                    <div class="col-md-3" id="btn4">
+                        <button id="easy" name="ButtonValue" value="4" type="submit" class="btn border border-dark btn-success form-control">Отлично / 4</button>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="row text-center">
+                @TempData["checkAnswer"]
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-3"></div>
+</div>
+
+<script>
+    document.getElementById("submitButton").onclick = function () {
+        document.getElementById("submitButtons").style.display = 'flex';
+        document.getElementById("submitButtonDiv").style.display = 'none';
+        document.getElementById("answerDiv").style.display = 'block';
+        document.getElementById("taskDiv").style.display = 'none';
+    }
+
+    const form = document.getElementById('answerForm');
+    form.addEventListener('keypress', function (e) {
+        if (e.keyCode === 13) {
+            e.preventDefault();
+        }
+    });
+
+    document.getElementById("answerInput")
+        .addEventListener("keyup", function (event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                document.getElementById("submitButton").click();
+                document.getElementById("answerInput").setAttribute("disabled", "");
+            }
+        });
+
+    document.onkeypress = function (e) {
+        e = e || window.event;
+        if (e.keyCode == 49) {
+            document.getElementById("fail").click();
+        }
+        else if (e.keyCode == 50) {
+            document.getElementById("hard").click();
+        }
+        else if (e.keyCode == 51) {
+            document.getElementById("good").click();
+        }
+        else if (e.keyCode == 52) {
+            document.getElementById("easy").click();
+        }
+    };
+</script>

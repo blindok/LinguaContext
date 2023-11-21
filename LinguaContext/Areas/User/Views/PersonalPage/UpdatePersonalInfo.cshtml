@@ -5,24 +5,52 @@
     <div class="col-md-3">
 
     </div>
-    <div class="col-md-6">
-        <form method="post" enctype="multipart/form-data">
+    <div class="col-md-5">
+        <form method="post" enctype="multipart/form-data" class="px-5">
             <input asp-for="Id" hidden>
             <input asp-for="UserName" hidden>
             <input asp-for="Email" hidden>
             <input asp-for="BirthDay" hidden>
-            <input asp-for="Name" hidden>
             <input asp-for="PasswordHash" hidden>
             <input asp-for="Role" hidden>
             <input asp-for="AvatarUrl" hidden>
-            <div class="form-floating mb-3" style="font-size: 1.2em">
-                <input asp-for="AvatarUrl" type="file" name="file" class="form-control">
-                <label asp-for="AvatarUrl" class="m-0 pt-2 px-2"></label>
+            <fieldset class="form-group px-5 mb-4">
+                <legend class="mt-4">Персональные данные</legend>
+                <div class="form-control border-0 mb-1 col-md-6">
+                    <label asp-for="Name" class="ms-2 text-muted">Имя</label>
+                    <input asp-for="Name" class="form-control" placeholder="" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-control border-0 mb-1 col-md-6">
+                    <label asp-for="UserName" class="ms-2 text-muted">Никнейм</label>
+                    <input asp-for="UserName" class="form-control" placeholder="" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+                <div class="form-control border-0 mb-1 col-md-6">
+                    <label asp-for="Email" class="ms-2 text-muted">Почта</label>
+                    <input type="email" asp-for="Email" class="form-control" placeholder="" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                @* <div class="form-control border-0 mb-1 col-md-6">
+                    <label asp-for="BirthDay" class="ms-2 text-muted">День Рождения</label>
+                    <input type="date" asp-for="BirthDay" value="@Model.BirthDay" class="form-control" placeholder="" min="1900-01-01" max="2013-12-31" />
+                    <span asp-validation-for="BirthDay" class="text-danger"></span>
+                </div> *@
+                <div class="form-control border-0 mb-1 col-md-6">
+                    <label asp-for="AvatarUrl" class="ms-2 text-muted">Изображение профиля</label>
+                    <input asp-for="AvatarUrl" type="file" name="file" class="form-control">
+                </div>
+            </fieldset>
+            <div class="row px-5">
+                <button type="submit" class="btn border border-dark btn-outline-secondary form-control">Сохранить изменения</button>
             </div>
-            <button type="submit" class="btn border border-dark btn-outline-secondary form-control">Сохранить изменения</button>
         </form>
     </div>
-    <div class="col-md-3">
-        <partial name="_SettingsSideBarPartial" />
-    </div>
+    <partial name="_SettingsSideBarPartial" />
 </div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
