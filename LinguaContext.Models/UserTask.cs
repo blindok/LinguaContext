@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using LinguaContext.Utility;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -26,7 +27,10 @@ public class UserTask
     public int CurrentInterval { get; set; } = 0;
 
     [DisplayName("Ease Factor")]
-    public double EaseFactor { get; set; } = 2.5;
+    public double EaseFactor { get; set; } = DefaultSettings.EaseFactor;
+
+    public bool IsPersonalTask { get; set; } = false;
+    public int  WrongAnswersNumber { get; set; } = 0;
 
     [ValidateNever]
     [ForeignKey("UserId")]

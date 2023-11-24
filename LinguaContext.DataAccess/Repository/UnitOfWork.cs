@@ -24,7 +24,7 @@ public class UnitOfWork : IUnitOfWork
         Users       = new UserRepository(_db);
         Sentences   = new SentenceRepository(_db);
         Tasks       = new UserTaskRepository(_db);
-        Statistics  = new StatisticsRepository(_db);
+        Statistics  = new StatisticsRepository(_db, Tasks);
     }
 
     public async Task Save()

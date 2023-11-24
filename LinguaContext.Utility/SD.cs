@@ -20,4 +20,6 @@ public static class DefaultSettings
     public const double FailIntervalModifier  = 0.0;
     public const double HardIntervalModifier  = 1.2;
     public const double EasyIntervalModifier  = 1.3;
+
+    public const double EaseFactor            = 2.5;
 }

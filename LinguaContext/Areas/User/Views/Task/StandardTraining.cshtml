@@ -17,16 +17,11 @@
                     <input asp-for="@Model.Sentence.Answer" id="answerCheck" hidden/>
                     <input asp-for="@Model.Sentence.AnswerTranslation" hidden />
                     <input asp-for="@Model.Sentence.ComplexityLevel" hidden />
-                    <input asp-for="@Model.Task.UserId" hidden />
-                    <input asp-for="@Model.Task.SentenceId" hidden />
-                    <input asp-for="@Model.Task.FirstReview" hidden />
-                    <input asp-for="@Model.Task.LastReview" hidden />
-                    <input asp-for="@Model.Task.NextReview" hidden />
-                    <input asp-for="@Model.Task.RepetitionNumber" hidden />
-                    <input asp-for="@Model.Task.CurrentInterval" hidden />
-                    <input asp-for="@Model.Task.EaseFactor" hidden />
                     <input asp-for="@Model.WordsNumber" hidden />
-                    <input asp-for="@Model.Answer[0]" hidden />
+                    <input asp-for="@Model.Settings.DisplayTranslation" hidden />
+                    <input asp-for="@Model.Settings.NewDailyCardsNumber" hidden />
+                    <input asp-for="@Model.Settings.HighlightAnswer" hidden />
+                    <input asp-for="@Model.WrongAnswer" id="wrongAnswer" />
                 </div>
 
                 <div class="text-center mt-5" id="taskDiv">
@@ -39,7 +34,7 @@
                                                         <span class="h2">@chunks[i]</span>
                                             int width = Model.Sentence.Answer.Length * 25;
                                                         <span style="display: inline-block; width: @{@width}px;">
-                                                        <input type="text" oninput="CheckAnswer(this.value, this.classList)" asp-for="@(Model.Answer[i])" id="answerInput" class="form-control" style="font-size: 2.0em" />
+                                                        <input type="text" oninput="CheckAnswer(this.value, this.classList)" id="answerInput" class="form-control" style="font-size: 2.0em" />
                                                         </span>
                         }
 
@@ -93,9 +88,10 @@
         document.getElementById("submitButtonDiv").style.display = 'none';
         document.getElementById("resultDiv").style.display = 'block';
 
-        if (document.getElementById('answerCheck').value == document.getElementById('answerInput').value.toLowerCase()) {
+        if (document.getElementById('answerCheck').value.toLowerCase() == document.getElementById('answerInput').value.toLowerCase()) {
             document.getElementById("resultDiv4").style.display = 'inline';
         } else {
+            document.getElementById("wrongAnswer").checked = 1;
             document.getElementById("resultDiv2").innerHTML = document.getElementById('answerInput').value;
             document.getElementById("resultDiv1").style.display = 'inline';
             document.getElementById('answerInput').value = document.getElementById('answerCheck').value;
@@ -148,7 +144,7 @@
                 classList.remove("text-danger");
                 return;
             }
-            let answer = document.getElementById('answerCheck').value.substring(0, n);
+            let answer = document.getElementById('answerCheck').value.substring(0, n).toLowerCase();
             if (value == answer) {
                 classList.add("text-success");
                 classList.remove("text-danger");

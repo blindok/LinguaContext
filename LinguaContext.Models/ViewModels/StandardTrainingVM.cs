@@ -4,10 +4,9 @@ namespace LinguaContext.Models.ViewModels;
 
 public class StandardTrainingVM
 {
-    public PersonalSettings Settings { get; set; }
-    public Sentence   Sentence    { get; set; }
-    public UserTask   Task        { get; set; }
-    public int        WordsNumber { get; set; }
-    public string[]?  Answer      { get; set; }
-    public int        ButtonValue { get; set; }
+    public PersonalSettings Settings        { get; set; }
+    public Sentence         Sentence        { get; set; }
+    public byte             WordsNumber     { get; set; }
+    public byte             ButtonValue     { get; set; }
+    public bool             WrongAnswer     { get; set; }
 }

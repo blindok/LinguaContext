@@ -41,4 +41,18 @@ public class UserTaskRepository : Repository<UserTask>, IUserTaskRepository
         if (task == null) return true;
         return false;
     }
+
+    public int CountBaseTasksForReview(int userId)
+    {
+        DateTime today = DateTime.Now.Date;
+        int n = _dbSet.Where(t => t.UserId == userId && t.NextReview.Date == today && !t.IsPersonalTask).Count();
+        return n;
+    }
+
+    public int CountUserTasksForReview(int userId)
+    {
+        DateTime today = DateTime.Now.Date;
+        int n = _dbSet.Where(t => t.UserId == userId && t.NextReview.Date == today && t.IsPersonalTask).Count();
+        return n;
+    }
 }

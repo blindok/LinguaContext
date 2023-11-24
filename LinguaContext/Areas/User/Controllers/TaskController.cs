@@ -3,6 +3,7 @@ using LinguaContext.Models;
 using LinguaContext.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace LinguaContext.Areas.User.Controlles;
@@ -39,10 +40,12 @@ public class TaskController : Controller
     [HttpPost]
     public IActionResult Index(int id, TrainingSettingsVM model)
     {
-        PersonalStatistics? statistics = _unitOfWork.Statistics.GetFirstOrDefault(s => s.UserId == id);
+        PersonalStatistics? statistics = _unitOfWork.Statistics.GetCurrentStatistics(id);
 
-        //_memoryCache.Set(id, statistics);
-        _memoryCache.Set(id, model.Settings);
+        string key1 = "stat" + id.ToString();
+        string key2 = "set" + id.ToString();
+        _memoryCache.Set(key1, statistics);
+        _memoryCache.Set(key2, model.Settings);
 
         return RedirectToAction(model.TrainingType, new { id = id});
     }
@@ -50,13 +53,12 @@ public class TaskController : Controller
     [HttpGet]
     public IActionResult StandardTraining(int id)
     {
-        var settings = (PersonalSettings?)_memoryCache.Get(id)!;
-        if (settings.NewDailyCardsNumber == 0)
+        var settings   = (PersonalSettings?)    _memoryCache.Get("set"  + id.ToString());
+        if (settings == null)
         {
-            return RedirectToAction("Index", new { id = id});
+            settings = _unitOfWork.Users.GetPersonalSettingsByUserId(id);
+            if (settings == null) settings = new();
         }
-        settings.NewDailyCardsNumber--;
-        _memoryCache.Set(id, settings);
 
         Sentence sentence = _unitOfWork.Sentences.GetRandomSentence();
 
@@ -66,15 +68,14 @@ public class TaskController : Controller
         }
 
         UserTask task = _unitOfWork.Tasks.CreateUserTask(id, sentence.SentenceId);
+        _memoryCache.Set("task" + id.ToString(), task);
 
-        int wordsNumber = sentence.Answer.Count(t => t == '~') + 1;
+        byte wordsNumber = (byte)(sentence.Answer.Count(t => t == '~') + 1);
 
         StandardTrainingVM model = new StandardTrainingVM()
         {
             Sentence = sentence,
-            Task = task,
             WordsNumber = wordsNumber,
-            Answer = new string[wordsNumber],
             Settings = settings
         };
 
@@ -84,11 +85,16 @@ public class TaskController : Controller
     [HttpPost]
     public IActionResult StandardTraining(int id, StandardTrainingVM model)
     {
-        UserTask task = _unitOfWork.Tasks.GetUserTask(id, model.Sentence.SentenceId);
+        UserTask? task = (UserTask?)_memoryCache.Get("task"+id.ToString());
+        if (task == null)
+        {
+            task = _unitOfWork.Tasks.GetUserTask(id, model.Sentence.SentenceId);
+        }
+
         int result = model.ButtonValue;
 
         task.RepetitionNumber++;
-        task.LastReview = DateTime.UtcNow;
+        task.LastReview = DateTime.Now;
 
         double delay = (task.LastReview - task.NextReview).TotalDays;
         double easeFactor = task.EaseFactor;
@@ -142,6 +148,9 @@ public class TaskController : Controller
 
         task.NextReview = task.LastReview.AddDays(task.CurrentInterval);
 
+        if (model.WrongAnswer)
+            task.WrongAnswersNumber++;
+
         if (task.RepetitionNumber == 1)
         {
             _unitOfWork.Tasks.Create(task);
@@ -153,14 +162,32 @@ public class TaskController : Controller
         
         _unitOfWork.Save();
 
-        return RedirectToAction("StandardTraining", new { id = model.Task.UserId});
+        var statistics = (PersonalStatistics?)_memoryCache.Get("stat" + id.ToString());
+        if (statistics == null)
+        {
+            statistics = _unitOfWork.Statistics.GetCurrentStatistics(id);
+        }
+        statistics.NewBaseTasksNumber++;
+
+        if ((statistics!.NewBaseTasksNumber + statistics!.NewUserTasksNumber) >= model.Settings.NewDailyCardsNumber && true)
+            //statistics.ReviewedBaseTasksNumber == statistics.ForReviewBaseTasksNumber)
+        {
+            return RedirectToAction("FinishTraining", new { id = id});
+        }
+
+        return RedirectToAction("StandardTraining", new { id = id});
     }
 
     [HttpGet]
-    [AllowAnonymous]
-    public IActionResult GetRandomSentence()
+    public IActionResult FinishTraining(int id)
     {
-        Sentence sentence = _unitOfWork.Sentences.GetRandomSentence();
-        return Ok(sentence);
+        PersonalStatistics? statistics = (PersonalStatistics?)_memoryCache.Get("stat" + id.ToString());
+        if (statistics != null)
+        {
+            _unitOfWork.Statistics.Update(statistics);
+            _unitOfWork.Save();
+        }
+
+        return Ok("You've finished the train!");
     }
 }
