@@ -8,13 +8,13 @@
     <div class="col-md-3"></div>
     <div class="col-md-6">
         <div class="card p-3">
-            <form id="answerForm" autocomplete="off"  method="post" enctype="multipart/form-data">
+            <form id="answerForm" asp-route-id="@User.FindFirst("userid")!.Value" autocomplete="off" method="post" enctype="multipart/form-data">
                 <div>
                     <input asp-for="@Model.Sentence.SentenceId" hidden />
                     <input asp-for="@Model.Sentence.Phrase" hidden />
                     <input asp-for="@Model.Sentence.FormattedPhrase" hidden />
                     <input asp-for="@Model.Sentence.Translation" hidden />
-                    <input asp-for="@Model.Sentence.Answer" hidden />
+                    <input asp-for="@Model.Sentence.Answer" id="answerCheck" hidden/>
                     <input asp-for="@Model.Sentence.AnswerTranslation" hidden />
                     <input asp-for="@Model.Sentence.ComplexityLevel" hidden />
                     <input asp-for="@Model.Task.UserId" hidden />
@@ -36,37 +36,38 @@
 
                         for (int i = 0; i < Model.WordsNumber; ++i)
                         {
-                                <span class="h2">@chunks[i]</span>
-                                int width = Model.Sentence.Answer.Length * 25;
-                                <span style="display: inline-block; width: @{@width}px;">
-                                <input asp-for="@(Model.Answer[i])" id="answerInput" class="form-control h2" />
-                                </span>
+                                                        <span class="h2">@chunks[i]</span>
+                                            int width = Model.Sentence.Answer.Length * 25;
+                                                        <span style="display: inline-block; width: @{@width}px;">
+                                                        <input type="text" oninput="CheckAnswer(this.value, this.classList)" asp-for="@(Model.Answer[i])" id="answerInput" class="form-control" style="font-size: 2.0em" />
+                                                        </span>
                         }
-                            <span class="h2">@chunks[Model.WordsNumber]</span>
+
+                                                <span class="h2">@chunks[Model.WordsNumber]</span>
                     }
                 </div>
-                <div class="text-center mt-5" id="answerDiv" style="display: none">
-                    <p class="h2">@Model.Sentence.Phrase</p>
-                </div>
-                <div class="text-center">
-                    <p class="h5 text-muted">@Model.Sentence.Translation</p>
+
+                <div class="text-center mt-2" style="height: 30px">
+                    <p id="translation" class="h5 text-muted" style="display: none">@Model.Sentence.Translation</p>
+                    <button id="tranlateBtn" style="display: none" type="button" class="btn btn-light">...</button>
                 </div>
 
-                <div id="resultDiv" class="row text-center" >
-                    <p class="h5 text-success" id="resultDiv1" style="display: none">@Model.Sentence.Answer</p>
-                    <p class="h5 text-primary" id="resultDiv3" style="display: none">-></p>
-                    <p class="h5 text-danger" id="resultDiv2" style="display: none"></p>
+                <div id="resultDiv" class="row text-center my-3" >
+                    <p class="h2 text-danger" id="resultDiv2" style="display: none"></p>
+                    <p class="h2 text-primary" id="resultDiv3" style="display: none"><i class="bi bi-arrow-right"></i></p>
+                    <p class="h2 text-success" id="resultDiv1" style="display: none">@Model.Sentence.Answer</p>
+                    <p class="h2 text-success" id="resultDiv4" style="display: none">Right!</p>
                 </div>
 
-                <div class="row mt-5" id="submitButtonDiv">
-                    <div class="col-md-3" id="sec"></div>
+                <div class="row" id="submitButtonDiv">
+                    <div class="col-md-3"></div>
                     <div class="col-md-6">
                         <button type="button" id="submitButton" class="btn border border-dark btn-secondary form-control">Ответить</button>
                     </div>
                     <div class="col-md-3"></div>
                 </div>
                 
-                <div class="row mt-5" id="submitButtons" style="display: none">
+                <div class="row" id="submitButtons" style="display: none">
                     <div class="col-md-3" id="btn1" >
                         <button id="fail" name="ButtonValue" value="1" type="submit" class="btn border border-dark btn-danger form-control">Повтор / 1</button>
                     </div>
@@ -81,11 +82,6 @@
                     </div>
                 </div>
             </form>
-            
-            <div class="row text-center">
-                @TempData["checkAnswer"]
-            </div>
-
         </div>
     </div>
     <div class="col-md-3"></div>
@@ -95,20 +91,16 @@
     document.getElementById("submitButton").onclick = function () {
         document.getElementById("submitButtons").style.display = 'flex';
         document.getElementById("submitButtonDiv").style.display = 'none';
-        document.getElementById("answerDiv").style.display = 'block';
         document.getElementById("resultDiv").style.display = 'block';
-        document.getElementById("taskDiv").style.display = 'none';
 
-        document.getElementById("resultDiv2").innerHTML = document.getElementById('answerInput').value;
-        document.getElementById("resultDiv1").style.display = 'inline';
-        document.getElementById("resultDiv2").style.display = 'inline';
-        document.getElementById("resultDiv3").style.display = 'inline';
-
-        if (document.getElementById('answerInput').value == @Model.Sentence.Answer) {
-            document.getElementById("resultDiv1").style.display = 'block';
-        }
-        else {
-            document.getElementById("resultDiv2").style.display = 'block';
+        if (document.getElementById('answerCheck').value == document.getElementById('answerInput').value.toLowerCase()) {
+            document.getElementById("resultDiv4").style.display = 'inline';
+        } else {
+            document.getElementById("resultDiv2").innerHTML = document.getElementById('answerInput').value;
+            document.getElementById("resultDiv1").style.display = 'inline';
+            document.getElementById('answerInput').value = document.getElementById('answerCheck').value;
+            document.getElementById("resultDiv2").style.display = 'inline';
+            document.getElementById("resultDiv3").style.display = 'inline';
         }
     }
 
@@ -144,3 +136,45 @@
         }
     };
 </script>
+
+@if (@Model.Settings.HighlightAnswer)
+{
+    <script>
+        function CheckAnswer(value, classList) {
+            value = value.toLowerCase();
+            let n = value.length;
+            if (n == 0) {
+                classList.remove("text-success");
+                classList.remove("text-danger");
+                return;
+            }
+            let answer = document.getElementById('answerCheck').value.substring(0, n);
+            if (value == answer) {
+                classList.add("text-success");
+                classList.remove("text-danger");
+            }
+            else {
+                classList.remove("text-success");
+                classList.add("text-danger");
+            }
+        }
+    </script>
+}
+
+@if (Model.Settings.DisplayTranslation)
+{
+    <script>
+        document.getElementById("translation").style.display = 'inline';
+    </script>
+}
+else
+{
+    <script>
+        document.getElementById("tranlateBtn").style.display = 'inline';
+
+        document.getElementById("tranlateBtn").onclick = function () {
+            document.getElementById("tranlateBtn").style.display = 'none';
+            document.getElementById("translation").style.display = 'inline';
+        }
+    </script>
+}

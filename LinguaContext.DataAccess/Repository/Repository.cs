@@ -2,13 +2,14 @@
 using LinguaContext.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace LinguaContext.DataAccess.Repository;
 
 public class Repository<T> : IRepository<T> where T : class
 {
     protected readonly ApplicationDbContext _db;
-    internal DbSet<T> _dbSet;
+    internal  readonly DbSet<T> _dbSet;
 
     public Repository(ApplicationDbContext db)
     {
@@ -16,14 +17,14 @@ public class Repository<T> : IRepository<T> where T : class
         _dbSet = _db.Set<T>();
     }
 
-    public IEnumerable<T> GetAll(string? includeProperties = null)
+    public IAsyncEnumerable<T> GetAll(string? includeProperties = null)
     {
         IQueryable<T> query = _dbSet;
 
-        if (!string.IsNullOrEmpty(includeProperties)) 
+        if (!string.IsNullOrEmpty(includeProperties))
             IncludeProperties(query, includeProperties);
 
-        return query.AsEnumerable();
+        return query.AsAsyncEnumerable();
     }
 
     public T? GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null)

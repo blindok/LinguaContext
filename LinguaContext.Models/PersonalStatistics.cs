@@ -16,9 +16,16 @@ public class PersonalStatistics
     [DisplayName("Date")]
     public DateOnly Date {  get; set; }
 
-    public int ComplitedTaskNumber { get; set; }
-    public int CreatedTaskNumber { get; set; }
-    public int NewTaskNumber { get; set; }
+    public int ForReviewBaseTasksNumber { get; set; }
+    public int ForReviewUserTasksNumber { get; set; }
+
+    public int NewBaseTasksNumber       { get; set; }
+    public int NewUserTasksNumber       { get; set; }
+
+    public int ReviewedBaseTasksNumber  { get; set; }
+    public int ReviewedUserTasksNumber  { get; set; }
+
+    public int CreatedTasksNumber       { get; set; }
 
     [ForeignKey("UserId")]
     [ValidateNever]

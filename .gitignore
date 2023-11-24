@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 LinguaContext.DataAccess/Migrations/
+LinguaContext.Models/Migrations/

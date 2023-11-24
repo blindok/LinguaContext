@@ -43,7 +43,7 @@ public class AuthenticationController : Controller
 
         try
         {
-            _unitOfWork.Users.Add(registerVM.User);
+            _unitOfWork.Users.Create(registerVM.User);
             _unitOfWork.Save();
         }
         catch (Exception e)

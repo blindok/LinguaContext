@@ -13,8 +13,6 @@ public class PersonalPageController : Controller
     private readonly IUnitOfWork _unitOfWork;
     private readonly IWebHostEnvironment _webHostEnvironment;
 
-    //private static Models.User? CurrentUser { get; set; } = null;
-
     public PersonalPageController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
     {
         _unitOfWork = unitOfWork;
@@ -28,11 +26,8 @@ public class PersonalPageController : Controller
 
         if (user == null)
         {
-            //CurrentUser = null;
             return RedirectToAction("Login", "Authentication", new { Area = "Identity" });
         }
-
-        //CurrentUser = user;
 
         return View(user);
     }
@@ -40,7 +35,7 @@ public class PersonalPageController : Controller
     [HttpGet]
     public IActionResult Settings(int id)
     {
-        return RedirectToAction("UpdatePersonalInfo");
+        return RedirectToAction("UpdatePersonalInfo", new { id = id });
     }
 
     [HttpGet]
@@ -48,7 +43,6 @@ public class PersonalPageController : Controller
     {
         var user = _unitOfWork.Users.GetFirstOrDefault(x => x.Id == id);
         ViewData["action"] = "PersonalInfo";
-        //if (CurrentUser == null) CurrentUser = _unitOfWork.Users.GetFirstOrDefault(x => x.Id == id);
         return View(user);
     }
 
@@ -83,14 +77,13 @@ public class PersonalPageController : Controller
         _unitOfWork.Users.Update(user);
         _unitOfWork.Save();
 
-        return RedirectToAction("Account", new { id = user.Id });
+        ViewData["action"] = "PersonalInfo";
+        return View(user);
     }
 
     [HttpGet]
     public IActionResult EditPersonalFactors(int id)
     {
-        //if (CurrentUser == null) CurrentUser = _unitOfWork.Users.GetFirstOrDefault(x => x.Id == id);
-
         var personalFactors = _unitOfWork.Users.GetPersonalFactorsByUserId(id);
 
         if (personalFactors == null)
@@ -104,8 +97,9 @@ public class PersonalPageController : Controller
     }
 
     [HttpPost]
-    public IActionResult EditPersonalFactors(PersonalFactors factors)
+    public IActionResult EditPersonalFactors(int id, PersonalFactors factors)
     {
+        ViewData["action"] = "PersonalFactors";
         if (factors.IntervalModifier     == DefaultSettings.IntervalModifier     &&
             factors.FailIntervalModifier == DefaultSettings.FailIntervalModifier &&
             factors.HardIntervalModifier == DefaultSettings.HardIntervalModifier &&
@@ -121,7 +115,7 @@ public class PersonalPageController : Controller
 
         if (factors.PersonalFactorsId == 0)
         {
-            _unitOfWork.Users.CreatePersonalFactorsForUser(factors.UserId, factors);
+            _unitOfWork.Users.CreatePersonalFactors(factors.UserId, factors);
         }
         else
         {
@@ -135,7 +129,44 @@ public class PersonalPageController : Controller
     [HttpGet]
     public IActionResult EditPersonalSettings(int id)
     {
+        var personalSettings = _unitOfWork.Users.GetPersonalSettingsByUserId(id);
+
+        if (personalSettings == null)
+        {
+            personalSettings = new();
+            personalSettings.UserId = id;
+        }
+
         ViewData["action"] = "PersonalSettings";
-        return View();
+        return View(personalSettings);
+    }
+
+    [HttpPost]
+    public IActionResult EditPersonalSettings(int id, PersonalSettings settings)
+    {
+        ViewData["action"] = "PersonalSettings";
+        if (settings.NewDailyCardsNumber == DefaultSettings.NewDailyCardsNumber &&
+            settings.HighlightAnswer == DefaultSettings.HighlightAnswer &&
+            settings.DisplayTranslation == DefaultSettings.DisplayTranslation)
+        {
+            if (settings.PersonalSettingsId != 0)
+            {
+                _unitOfWork.Users.DeletePersonalSettings(settings);
+                _unitOfWork.Save();
+            }
+            return View(settings);
+        }
+
+        if (settings.PersonalSettingsId == 0)
+        {
+            _unitOfWork.Users.CreatePersonalSettings(settings.UserId, settings);
+        }
+        else
+        {
+            _unitOfWork.Users.UpdatePersonalSettings(settings);
+        }
+        _unitOfWork.Save();
+
+        return View(settings);
     }
 }

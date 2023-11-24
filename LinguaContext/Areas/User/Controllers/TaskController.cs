@@ -3,6 +3,7 @@ using LinguaContext.Models;
 using LinguaContext.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace LinguaContext.Areas.User.Controlles;
 
@@ -10,19 +11,26 @@ namespace LinguaContext.Areas.User.Controlles;
 [Authorize(Roles = "user,admin")]
 public class TaskController : Controller
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUnitOfWork    _unitOfWork;
+    private readonly IMemoryCache   _memoryCache;
 
-    public TaskController(IUnitOfWork unitOfWork)
+    public TaskController(IUnitOfWork unitOfWork, IMemoryCache memoryCache)
     {
         _unitOfWork = unitOfWork;
+        _memoryCache = memoryCache;
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public IActionResult Index(int id)
     {
+        PersonalSettings? settings = _unitOfWork.Users.GetPersonalSettingsByUserId(id);
+
+        if (settings == null)
+            settings = new();
+
         TrainingSettingsVM model = new()
         {
-            Settings = new()
+            Settings = settings
         };
 
         return View(model);
@@ -31,13 +39,27 @@ public class TaskController : Controller
     [HttpPost]
     public IActionResult Index(int id, TrainingSettingsVM model)
     {
+        PersonalStatistics? statistics = _unitOfWork.Statistics.GetFirstOrDefault(s => s.UserId == id);
+
+        //_memoryCache.Set(id, statistics);
+        _memoryCache.Set(id, model.Settings);
+
         return RedirectToAction(model.TrainingType, new { id = id});
     }
 
     [HttpGet]
     public IActionResult StandardTraining(int id)
     {
+        var settings = (PersonalSettings?)_memoryCache.Get(id)!;
+        if (settings.NewDailyCardsNumber == 0)
+        {
+            return RedirectToAction("Index", new { id = id});
+        }
+        settings.NewDailyCardsNumber--;
+        _memoryCache.Set(id, settings);
+
         Sentence sentence = _unitOfWork.Sentences.GetRandomSentence();
+
         while (!_unitOfWork.Tasks.IsAlreadyLearnt(id, sentence.SentenceId))
         {
             sentence = _unitOfWork.Sentences.GetRandomSentence();
@@ -52,25 +74,17 @@ public class TaskController : Controller
             Sentence = sentence,
             Task = task,
             WordsNumber = wordsNumber,
-            Answer = new string[wordsNumber]
+            Answer = new string[wordsNumber],
+            Settings = settings
         };
 
         return View(model);
     }
 
     [HttpPost]
-    public IActionResult StandardTraining(StandardTrainingVM model)
+    public IActionResult StandardTraining(int id, StandardTrainingVM model)
     {
-        if (model.Answer![0] == model.Sentence.Answer)
-        {
-            TempData["checkAnswer"] = "You are right!";
-        }    
-        else
-        {
-            TempData["checkAnswer"] = "You are wrong!";
-        }
-
-        UserTask task = model.Task;
+        UserTask task = _unitOfWork.Tasks.GetUserTask(id, model.Sentence.SentenceId);
         int result = model.ButtonValue;
 
         task.RepetitionNumber++;
@@ -128,7 +142,15 @@ public class TaskController : Controller
 
         task.NextReview = task.LastReview.AddDays(task.CurrentInterval);
 
-        _unitOfWork.Tasks.Create(task);
+        if (task.RepetitionNumber == 1)
+        {
+            _unitOfWork.Tasks.Create(task);
+        }
+        else
+        {
+            _unitOfWork.Tasks.Update(task);
+        }
+        
         _unitOfWork.Save();
 
         return RedirectToAction("StandardTraining", new { id = model.Task.UserId});

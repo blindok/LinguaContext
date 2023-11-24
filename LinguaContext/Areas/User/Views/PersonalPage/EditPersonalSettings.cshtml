@@ -1,4 +1,6 @@
-﻿@{
+﻿@model PersonalSettings
+
+@{
     ViewData["Title"] = "Персональные Настройки Тренировок";
 }
 
@@ -7,13 +9,24 @@
     </div>
     <div class="col-md-5">
         <form method="post" autocomplete="off" enctype="multipart/form-data" class="px-5">
-            @* <input asp-for="UserId" hidden>
-            <input asp-for="PersonalFactorsId" hidden> *@
+            <input asp-for="UserId" hidden>
+            <input asp-for="PersonalSettingsId" hidden>
             <fieldset class="form-group px-5 mb-4">
                 <legend class="mt-4">Custom Modifiers</legend>
-                <div class="row mb-3">
-                    <label  for="customRange1" class="form-label"></label>
-                    <input type="range" min="0.0" max="3.0" step="0.1" list="markers" class="form-range" id="IntervalModifier" oninput="num1.value = this.value">
+                <div class="form-control border-0 mb-1 col-md-6">
+                    <label asp-for="NewDailyCardsNumber" class="ms-2 text-muted">Количество ежедневных новых карт:</label>
+                    <input asp-for="NewDailyCardsNumber" />
+                    <span asp-validation-for="NewDailyCardsNumber" class="text-danger"></span>
+                </div>
+                <div class="form-control border-0 mb-1 col-md-6">
+                    <label asp-for="HighlightAnswer" class="ms-2 text-muted">Подсвечивать ответ: </label>
+                    <input type="checkbox" asp-for="HighlightAnswer" />
+                    <span asp-validation-for="HighlightAnswer" class="text-danger"></span>
+                </div>
+                <div class="form-control border-0 mb-1 col-md-6">
+                    <label asp-for="DisplayTranslation" class="ms-2 text-muted">Показывать перевод: </label>
+                    <input type="checkbox" asp-for="DisplayTranslation" />
+                    <span asp-validation-for="DisplayTranslation" class="text-danger"></span>
                 </div>
             </fieldset>
             <div class="row px-5">

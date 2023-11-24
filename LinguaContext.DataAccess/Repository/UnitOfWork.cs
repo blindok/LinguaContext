@@ -12,21 +12,23 @@ public class UnitOfWork : IUnitOfWork
     public IUserRepository          Users       { get; private set; }
     public ISentenceRepository      Sentences   { get; private set; }
     public IUserTaskRepository      Tasks       { get; private set; }
+    public IStatisticsRepository    Statistics  { get; private set; }
 
     private readonly ApplicationDbContext _db;
     private readonly ILogger<UnitOfWork> _logger;
 
     public UnitOfWork(ApplicationDbContext db, ILogger<UnitOfWork> logger)
     {
-        _db       = db;
-        _logger   = logger;
-        Users     = new UserRepository(_db);
-        Sentences = new SentenceRepository(_db);
-        Tasks     = new UserTaskRepository(_db);
+        _db         = db;
+        _logger     = logger;
+        Users       = new UserRepository(_db);
+        Sentences   = new SentenceRepository(_db);
+        Tasks       = new UserTaskRepository(_db);
+        Statistics  = new StatisticsRepository(_db);
     }
 
-    public void Save()
+    public async Task Save()
     {
-        _db.SaveChanges();
+        await _db.SaveChangesAsync();
     }
 }

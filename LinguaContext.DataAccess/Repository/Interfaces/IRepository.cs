@@ -4,7 +4,7 @@ namespace LinguaContext.DataAccess.Repository.Interfaces;
 
 public interface IRepository<T> where T : class
 {
-    IEnumerable<T> GetAll(string? includeProperties = null);
+    IAsyncEnumerable<T> GetAll(string? includeProperties = null);
     T? GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null);
     void Create(T entity);
     void Update(T entity);

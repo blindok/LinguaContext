@@ -18,30 +18,26 @@ public class UserTaskRepository : Repository<UserTask>, IUserTaskRepository
             LastReview  = DateTime.Now,
             NextReview  = DateTime.Now,
         };
-    }
-
-    public UserTask CreateUserTask(User user, Sentence sentence)
-    {
-        return new UserTask()
-        {
-            UserId      = user.Id,
-            SentenceId  = sentence.SentenceId,
-            FirstReview = DateTime.Now,
-            LastReview  = DateTime.Now,
-            NextReview  = DateTime.Now,
-            User        = user,
-            Sentence    = sentence
-        };
-    }
+    } 
 
     public UserTask? GetNextUserTaskByUserId(int UserId)
     {
         throw new NotImplementedException();
     }
 
-    public bool IsAlreadyLearnt(int userId, int senteceId)
+    public UserTask GetUserTask(int userId, int sentenceId)
     {
-        UserTask? task = GetFirstOrDefault(t => t.UserId == userId && t.SentenceId == senteceId);
+        UserTask? task = GetFirstOrDefault(t => t.UserId == userId && t.SentenceId == sentenceId);
+        if (task == null)
+        {
+            task = CreateUserTask(userId, sentenceId);
+        }
+        return task;
+    }
+
+    public bool IsAlreadyLearnt(int userId, int sentenceId)
+    {
+        UserTask? task = GetFirstOrDefault(t => t.UserId == userId && t.SentenceId == sentenceId);
         if (task == null) return true;
         return false;
     }

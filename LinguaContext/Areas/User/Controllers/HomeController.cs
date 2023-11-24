@@ -16,9 +16,9 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        if (HttpContext.User.Identity.IsAuthenticated == true)
+        if (HttpContext!.User!.Identity!.IsAuthenticated == true)
         {
-            return RedirectToAction("Index", "Task");
+            return RedirectToAction("Index", "Task", new {id = User.FindFirst("userid")!.Value });
         }
         return View();
     }

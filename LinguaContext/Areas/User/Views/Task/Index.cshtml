@@ -44,11 +44,21 @@
             <form method="post" asp-controller="Task" asp-action="Index" asp-route-id="@User.FindFirst("userid")!.Value" enctype="multipart/form-data">
                 <input id="input" asp-for="TrainingType" class="form-control" hidden/>
                 <div class="form-control border-0 col-md-6">
-                    <label asp-for="Settings.NewDailyCardsNumber" class="ms-2 text-muted">Кол-во новых слов: </label>
-                    <input asp-for="Settings.NewDailyCardsNumber" class="form-control" placeholder="" />
+                    <label asp-for="Settings.NewDailyCardsNumber" class="text-muted">Кол-во новых слов:</label>
+                    <input asp-for="Settings.NewDailyCardsNumber" class="form-control"/>
                     <span asp-validation-for="Settings.NewDailyCardsNumber" class="text-danger"></span>
                 </div>
-                <div class="row px-5 mb-3">
+                <div class="form-control border-0 col-md-6">
+                    <label asp-for="Settings.HighlightAnswer" class="text-muted">Подсвечивать ответ:</label>
+                    <input type="checkbox" asp-for="Settings.HighlightAnswer" class="" />
+                    <span asp-validation-for="Settings.HighlightAnswer" class="text-danger"></span>
+                </div>
+                <div class="form-control border-0 col-md-6">
+                    <label asp-for="Settings.DisplayTranslation" class="text-muted">Показывать перевод:</label>
+                    <input type="checkbox" asp-for="Settings.DisplayTranslation" class="" />
+                    <span asp-validation-for="Settings.DisplayTranslation" class="text-danger"></span>
+                </div>
+                <div class="row px-5 mt-3">
                     <button type="submit" class="btn btn-dark">Начать тренировку</button>
                 </div>
             </form>

@@ -16,6 +16,9 @@ public class PersonalSettings
     [Range(0, 50)]
     public int NewDailyCardsNumber { get; set; } = DefaultSettings.NewDailyCardsNumber;
 
+    public bool HighlightAnswer    { get; set; } = DefaultSettings.HighlightAnswer;
+    public bool DisplayTranslation { get; set; } = DefaultSettings.DisplayTranslation;
+
     [ForeignKey("UserId")]
     [ValidateNever]
     public User User { get; set; }
