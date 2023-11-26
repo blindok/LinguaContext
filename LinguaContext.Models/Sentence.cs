@@ -14,18 +14,18 @@ public class Sentence
     public int SentenceId { get; set; }
 
     [Required, NotNull]
-    [MaxLength(200)]
+    [MaxLength(350)]
     [DisplayName("Sentence")]
     [JsonPropertyName("phrase")]
     public string Phrase { get; set; } = String.Empty;
 
     [Required, NotNull]
-    [MaxLength(200)]
+    [MaxLength(350)]
     [DisplayName("Formatted Sentence")]
     [JsonPropertyName("formattedPhrase")]
     public string FormattedPhrase { get; set; } = String.Empty;
 
-    [MaxLength(200)]
+    [MaxLength(350)]
     [DisplayName("Translation")]
     [JsonPropertyName("translation")]
     public string Translation { get; set; } = String.Empty;
@@ -40,6 +40,11 @@ public class Sentence
     [DisplayName("Word Translation")]
     [JsonPropertyName("answerTranslation")]
     public string AnswerTranslation { get; set; } = String.Empty;
+
+    [Required, NotNull]
+    [Range(0, 5)]
+    [JsonPropertyName("answerWordsNumber")]
+    public int AnswerWordsNumber { get; set; }
 
     [DisplayName("Complexity Level")]
     [JsonPropertyName("complexityLevel")]

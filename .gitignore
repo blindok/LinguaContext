@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 LinguaContext.DataAccess/Migrations/
 LinguaContext.Models/Migrations/
+LinguaContext/wwwroot/images

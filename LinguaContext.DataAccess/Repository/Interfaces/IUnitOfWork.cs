@@ -7,5 +7,5 @@ public interface IUnitOfWork
     IUserTaskRepository     Tasks       { get; }
     IStatisticsRepository   Statistics  { get; }
 
-    Task Save();
+    void Save();
 }

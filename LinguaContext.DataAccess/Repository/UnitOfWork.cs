@@ -27,8 +27,8 @@ public class UnitOfWork : IUnitOfWork
         Statistics  = new StatisticsRepository(_db, Tasks);
     }
 
-    public async Task Save()
+    public void Save()
     {
-        await _db.SaveChangesAsync();
+        _db.SaveChanges();
     }
 }

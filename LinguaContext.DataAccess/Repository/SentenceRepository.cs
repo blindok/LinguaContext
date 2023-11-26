@@ -61,8 +61,8 @@ public class SentenceRepository : Repository<Sentence>, ISentenceRepository
         _dbSet.Add(sentence);
     }
 
-    public Sentence GetRandomSentence()
+    public Sentence? GetRandomSentence()
     {
-        return _dbSet.OrderBy(r => EF.Functions.Random()).FirstOrDefault()!;
+        return _dbSet.OrderBy(r => EF.Functions.Random()).FirstOrDefault();
     }
 }

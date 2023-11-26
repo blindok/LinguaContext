@@ -17,28 +17,30 @@
                     <input asp-for="@Model.Sentence.Answer" id="answerCheck" hidden/>
                     <input asp-for="@Model.Sentence.AnswerTranslation" hidden />
                     <input asp-for="@Model.Sentence.ComplexityLevel" hidden />
-                    <input asp-for="@Model.WordsNumber" hidden />
+                    <input asp-for="@Model.Sentence.AnswerWordsNumber" hidden />
                     <input asp-for="@Model.Settings.DisplayTranslation" hidden />
                     <input asp-for="@Model.Settings.NewDailyCardsNumber" hidden />
                     <input asp-for="@Model.Settings.HighlightAnswer" hidden />
-                    <input asp-for="@Model.WrongAnswer" id="wrongAnswer" />
+                    <input asp-for="@Model.WrongAnswer" id="wrongAnswer" hidden/>
+                    <input id="answerInput" hidden/>
                 </div>
 
                 <div class="text-center mt-5" id="taskDiv">
                     @{
                         var chunks = Model.Sentence.FormattedPhrase.Split('~');
-                        var words = Model.Sentence.Answer.Split("~");
+                        var wordsNumber = Model.Sentence.AnswerWordsNumber;
+                        int width = Model.Sentence.Answer.Length * 25 / wordsNumber;
 
-                        for (int i = 0; i < Model.WordsNumber; ++i)
+                        for (int i = 0; i < wordsNumber; ++i)
                         {
-                                                        <span class="h2">@chunks[i]</span>
-                                            int width = Model.Sentence.Answer.Length * 25;
-                                                        <span style="display: inline-block; width: @{@width}px;">
-                                                        <input type="text" oninput="CheckAnswer(this.value, this.classList)" id="answerInput" class="form-control" style="font-size: 2.0em" />
-                                                        </span>
+                                string id = "answer" + i.ToString();
+                                        <span class="h2">@chunks[i]</span>
+                                        <span style="display: inline-block; width: @{@width}px;">
+                                            <input id="@id" type="text" oninput="CheckAnswer(@i, this.value, this.classList)"  class="form-control" style="font-size: 2.2em" />
+                                        </span>
                         }
 
-                                                <span class="h2">@chunks[Model.WordsNumber]</span>
+                                    <span class="h2">@chunks[wordsNumber]</span>
                     }
                 </div>
 
@@ -57,7 +59,7 @@
                 <div class="row" id="submitButtonDiv">
                     <div class="col-md-3"></div>
                     <div class="col-md-6">
-                        <button type="button" id="submitButton" class="btn border border-dark btn-secondary form-control">Ответить</button>
+                        <button type="button" id="submitButton" onclick="Result(@Model.Sentence.AnswerWordsNumber)" class="btn border border-dark btn-secondary form-control">Ответить</button>
                     </div>
                     <div class="col-md-3"></div>
                 </div>
@@ -83,38 +85,12 @@
 </div>
 
 <script>
-    document.getElementById("submitButton").onclick = function () {
-        document.getElementById("submitButtons").style.display = 'flex';
-        document.getElementById("submitButtonDiv").style.display = 'none';
-        document.getElementById("resultDiv").style.display = 'block';
-
-        if (document.getElementById('answerCheck').value.toLowerCase() == document.getElementById('answerInput').value.toLowerCase()) {
-            document.getElementById("resultDiv4").style.display = 'inline';
-        } else {
-            document.getElementById("wrongAnswer").checked = 1;
-            document.getElementById("resultDiv2").innerHTML = document.getElementById('answerInput').value;
-            document.getElementById("resultDiv1").style.display = 'inline';
-            document.getElementById('answerInput').value = document.getElementById('answerCheck').value;
-            document.getElementById("resultDiv2").style.display = 'inline';
-            document.getElementById("resultDiv3").style.display = 'inline';
-        }
-    }
-
     const form = document.getElementById('answerForm');
     form.addEventListener('keypress', function (e) {
-        if (e.keyCode === 13) {
+        if (e.keyCode === 13 || e.keyCode === 32) {
             e.preventDefault();
         }
     });
-
-    document.getElementById("answerInput")
-        .addEventListener("keyup", function (event) {
-            event.preventDefault();
-            if (event.keyCode === 13) {
-                document.getElementById("submitButton").click();
-                document.getElementById("answerInput").setAttribute("disabled", "");
-            }
-        });
 
     document.onkeypress = function (e) {
         e = e || window.event;
@@ -133,28 +109,81 @@
     };
 </script>
 
-@if (@Model.Settings.HighlightAnswer)
-{
-    <script>
-        function CheckAnswer(value, classList) {
-            value = value.toLowerCase();
-            let n = value.length;
-            if (n == 0) {
-                classList.remove("text-success");
-                classList.remove("text-danger");
-                return;
-            }
-            let answer = document.getElementById('answerCheck').value.substring(0, n).toLowerCase();
-            if (value == answer) {
-                classList.add("text-success");
-                classList.remove("text-danger");
-            }
-            else {
-                classList.remove("text-success");
-                classList.add("text-danger");
+<script>
+
+    function Result(N) { 
+
+        let userInput = "";
+
+        for (let i = 0; i < N; i++) {
+            let element = document.getElementById("answer" + i.toString());
+            if (element) {
+                userInput += element.value + " ";
+                element.setAttribute("disabled", "");
             }
         }
+
+        userInput = userInput.slice(0, -1);
+        document.getElementById('answerInput').value = userInput;
+
+        document.getElementById("submitButtons").style.display = 'flex';
+        document.getElementById("submitButtonDiv").style.display = 'none';
+        document.getElementById("resultDiv").style.display = 'block';
+
+        if (document.getElementById('answerCheck').value.toLowerCase() == userInput.toLowerCase()) {
+            document.getElementById("resultDiv4").style.display = 'inline';
+        } else {
+            document.getElementById("wrongAnswer").checked = 1;
+            document.getElementById("resultDiv2").innerHTML = document.getElementById('answerInput').value;
+            document.getElementById("resultDiv1").style.display = 'inline';
+            document.getElementById('answerInput').value = document.getElementById('answerCheck').value;
+            document.getElementById("resultDiv2").style.display = 'inline';
+            document.getElementById("resultDiv3").style.display = 'inline';
+        }
+    }
+</script>
+
+@for (int i = 0; i < Model.Sentence.AnswerWordsNumber; ++i)
+{
+    string id = "answer" + i.ToString();
+    <script>
+        document.getElementById("@id")
+            .addEventListener("keyup", function (event) {
+                event.preventDefault();
+                if (event.keyCode === 13) {
+                    document.getElementById("submitButton").click();     
+                }
+            });
     </script>
+}
+
+@if (@Model.Settings.HighlightAnswer)
+{
+        <script>
+
+        let answer = document.getElementById('answerCheck').value.toLowerCase().split(" ");
+
+            function CheckAnswer(id, value, classList) {
+                value = value.toLowerCase();
+                let n = value.length;
+                if (n == 0) {
+                    classList.remove("text-success");
+                    classList.remove("text-danger");
+                    return;
+                }
+
+                let answerWord = answer[id].substring(0, n);
+
+                if (value == answerWord) {
+                    classList.add("text-success");
+                    classList.remove("text-danger");
+                }
+                else {
+                    classList.remove("text-success");
+                    classList.add("text-danger");
+                }
+            }
+        </script>
 }
 
 @if (Model.Settings.DisplayTranslation)

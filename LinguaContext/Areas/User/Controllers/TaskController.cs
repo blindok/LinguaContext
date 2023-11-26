@@ -25,13 +25,17 @@ public class TaskController : Controller
     public IActionResult Index(int id)
     {
         PersonalSettings? settings = _unitOfWork.Users.GetPersonalSettingsByUserId(id);
+        PersonalStatistics statistics = _unitOfWork.Statistics.GetCurrentStatistics(id);
+
+        _memoryCache.Set("stat" + id.ToString(), statistics);
 
         if (settings == null)
             settings = new();
 
         TrainingSettingsVM model = new()
         {
-            Settings = settings
+            Settings = settings,
+            Statistics = statistics
         };
 
         return View(model);
@@ -40,12 +44,7 @@ public class TaskController : Controller
     [HttpPost]
     public IActionResult Index(int id, TrainingSettingsVM model)
     {
-        PersonalStatistics? statistics = _unitOfWork.Statistics.GetCurrentStatistics(id);
-
-        string key1 = "stat" + id.ToString();
-        string key2 = "set" + id.ToString();
-        _memoryCache.Set(key1, statistics);
-        _memoryCache.Set(key2, model.Settings);
+        _memoryCache.Set("set" + id.ToString(), model.Settings);
 
         return RedirectToAction(model.TrainingType, new { id = id});
     }
@@ -70,12 +69,9 @@ public class TaskController : Controller
         UserTask task = _unitOfWork.Tasks.CreateUserTask(id, sentence.SentenceId);
         _memoryCache.Set("task" + id.ToString(), task);
 
-        byte wordsNumber = (byte)(sentence.Answer.Count(t => t == '~') + 1);
-
         StandardTrainingVM model = new StandardTrainingVM()
         {
             Sentence = sentence,
-            WordsNumber = wordsNumber,
             Settings = settings
         };
 
