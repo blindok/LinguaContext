@@ -4,36 +4,78 @@
     ViewData["Title"] = "Тренировки";
 }
 
-<div class="text-center my-5">
-    <h1 class="display-4">Доступные тренировки</h1>
+@{
+    int NewTasksNumber = @Model.Statistics.NewBaseTasksNumber + @Model.Statistics.NewUserTasksNumber;
+    int ForReviewTasksNumber = @Model.Statistics.ForReviewBaseTasksNumber + @Model.Statistics.ForReviewUserTasksNumber;
+}
+
+<div class="mt-5">
+    <div class="row">
+        <div class="col-md-2 offset-md-4">
+            <div class="card rounded">
+                <div class="card-body p-2">
+                    <div class="text-center">
+                        <div class="" style="position:absolute; left: 85%">
+                            <a asp-controller="PersonalPage" asp-action="EditPersonalSettings" asp-route-id="@User.FindFirst("userid")!.Value"><i class="bi bi-gear"></i></a>
+                        </div>
+                        <p class="lead text-center m-0" style="font-size: 3em; display: inline-flex">
+                            @NewTasksNumber
+                        </p>
+                        <p class="lead text-center m-0" style="font-size: 1.2em; display: inline-flex">
+                            из @Model.Settings.NewDailyCardsNumber
+                        </p>
+                    </div>
+                    <p class="lead card-title text-center m-0">новых карт пройдено сегодня</p>
+                    <p class="lead text-center m-0" style="font-size: 1em">
+                        @Model.Statistics.NewBaseTasksNumber базовых + @Model.Statistics.NewUserTasksNumber личных
+                    </p>
+                    <p class="lead text-start m-0" style="font-size: 1em">
+                        
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card rounded">
+                <div class="card-body p-2">
+                    <p class="lead text-center m-0" style="font-size: 3em"> @ForReviewTasksNumber</p>
+                    <p class="lead card-title text-center m-0">карт для повтора</p>
+                    <p class="lead text-center m-0" style="font-size: 1em">@Model.Statistics.ForReviewBaseTasksNumber базовых</p>
+                    <p class="lead text-center m-0" style="font-size: 1em">@Model.Statistics.ForReviewUserTasksNumber персональных</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="text-center my-2">
     <div class="row mt-3">
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
-            <div class="my-3">
+        <div class="col-md-4 offset-md-4">
+            <div class="my-3 mx-5">
                 <button id="standartBTN" onclick="Redirect('StandardTraining')" class="btn btn-primary btn-lg form-control">Стандартная тренировка</button>
                 @* <a asp-controller="Task" asp-action="StandardTraining" asp-route-id="@User.FindFirst("userid")!.Value" id="standartBTN" name="TrainingType" value="StandardTraining" class="btn btn-primary btn-lg form-control">Стандартная тренировка</a> *@
             </div>
-            <div class="my-3">
+            <div class="my-3 mx-5">
                 <button id="customBTN" @* onclick="Redirect('CustomTraining')" *@ class="btn btn-primary btn-lg form-control">Кастомная тренировка</button>
                 @* <a asp-controller="Task" asp-action="StandardTraining" asp-route-id="@User.FindFirst("userid")!.Value" name="TrainingType" value="CustomTraining" class="btn btn-primary btn-lg form-control">Кастомная тренировка</a> *@
             </div>
-            <div class="my-3">
+            <div class="my-3 mx-5">
                 <button id="BTN" @* onclick="Redirect('CustomTraining')" *@ class="btn btn-primary btn-lg form-control">Смешанная тренировка</button>
                 @* <a asp-controller="Task" asp-action="StandardTraining" asp-route-id="@User.FindFirst("userid")!.Value" name="TrainingType" value="3" class="btn btn-primary btn-lg form-control">Смешанная тренировка</a> *@
             </div>
         </div>
-        <div class="col-md-4"></div>
     </div>
 </div>
 
 <div id="popupBack" class="bg-primary text-center" style="opacity: 0.65; display: none; width: 100%; height: 100%;position: absolute; top: 0; left: 0;">
 </div>
 <div id="popup" class="bg-transparent" style="display: none; width: 100%; height: 100%;position: absolute; top: 0; left: 0;">
-    <div class="card" style="width:26%; left:37%; top: 30%" >
+    <div class="card" style="width:24%; left:38%; top: 30%" >
         <div class="card-header">
             <div class="row">
                 <div class="col-md-6 text-start">
-                    <p class="h3">Настройки</p>
+                    <p class="h4">Настройки</p>
                 </div>
                 <div class="col-md-6 text-end">
                     <button id="closeBtn" type="button" class="btn btn-close btn-close-white"  data-bs-dismiss="alert"></button>
@@ -43,26 +85,19 @@
         <div class="card-body">
             <form method="post" asp-controller="Task" asp-action="Index" asp-route-id="@User.FindFirst("userid")!.Value" enctype="multipart/form-data" class="px-3">
                 <input id="input" asp-for="TrainingType" class="form-control" hidden/>
+                <input asp-for="Settings.NewDailyCardsNumber" hidden />
                 <div class="form-control border-0 col-md-6 mb-2">
-                    @{
-                        int NewTaskNumber = @Model.Statistics.NewBaseTasksNumber + @Model.Statistics.NewUserTasksNumber;
-                     }
-                    <label asp-for="Settings.NewDailyCardsNumber" class="" style="font-size: 1.2em">Пройдено новых слов: @NewTaskNumber из </label>
-                    <input asp-for="Settings.NewDailyCardsNumber" class="form-control" style="display: inline-block; width: 65px;"/>
-                    <span asp-validation-for="Settings.NewDailyCardsNumber" class="text-danger"></span>
-                </div>
-                <div class="form-control border-0 col-md-6 mb-2">
-                    <input type="checkbox" asp-for="Settings.HighlightAnswer" class="" style="vertical-align: middle; width: 30px; height: 30px" />
+                    <input type="checkbox" asp-for="Settings.HighlightAnswer" class="" style="vertical-align: middle; width: 20px; height: 20px" />
                     <label asp-for="Settings.HighlightAnswer" class="ps-2" style="font-size: 1.2em">подсвечивать ответ</label>
                 </div>
                 <div class="form-control border-0 col-md-6 mb-2">
-                    <input type="checkbox" asp-for="Settings.DisplayTranslation" class="" style="vertical-align: middle; width: 30px; height: 30px" />
+                    <input type="checkbox" asp-for="Settings.DisplayTranslation" class="" style="vertical-align: middle; width: 20px; height: 20px" />
                     <label asp-for="Settings.DisplayTranslation" class="ps-2" style="font-size: 1.2em">показывать перевод</label>
                 </div>
-                <div class="row px-3 mt-3">
-                    <button type="submit" class="btn btn-dark">Начать тренировку</button>
+                <div class="row px-5 mt-3">
+                    <button type="submit" class="btn btn-dark">Начать</button>
                 </div>
-            </form>
+            </form> 
         </div>
     </div>
 </div>

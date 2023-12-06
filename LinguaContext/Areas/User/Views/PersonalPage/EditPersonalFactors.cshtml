@@ -11,8 +11,8 @@
         <form method="post" asp-route-id="@User.FindFirst("userid")!.Value" enctype="multipart/form-data" class="px-5">
             <input asp-for="UserId" hidden>
             <input asp-for="PersonalFactorsId" hidden>
+            <p class=" px-4 h3 mt-4">Интервальное повторение</p>
             <fieldset class="form-group px-5 mb-4">
-                <legend class="mt-4">Custom Modifiers</legend>
                 <div class="row mb-3">
                     <label asp-for="IntervalModifier" for="customRange1" class="form-label"></label>
                     <input asp-for="IntervalModifier" type="range" min="0.0" max="3.0" step="0.1" list="markers" class="form-range" id="IntervalModifier" oninput="num1.value = this.value">

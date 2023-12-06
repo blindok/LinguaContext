@@ -154,7 +154,7 @@ public class PersonalPageController : Controller
                 _unitOfWork.Users.DeletePersonalSettings(settings);
                 _unitOfWork.Save();
             }
-            return View(settings);
+            return RedirectToAction("EditPersonalSettings", new { id = id });
         }
 
         if (settings.PersonalSettingsId == 0)
@@ -167,6 +167,6 @@ public class PersonalPageController : Controller
         }
         _unitOfWork.Save();
 
-        return View(settings);
+        return RedirectToAction("EditPersonalSettings", new { id = id });
     }
 }

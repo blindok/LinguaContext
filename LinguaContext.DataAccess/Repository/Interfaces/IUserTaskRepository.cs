@@ -9,7 +9,9 @@ public interface IUserTaskRepository : IRepository<UserTask>
 
     int CountUserTasksForReview(int userId);
     int CountBaseTasksForReview(int userId);
-    //UserTask? GetNextUserTaskByUserId(int userId);
 
     bool IsAlreadyLearnt(int userId, int sentenceId);
+
+    UserTask? GetBaseReviewTask(int userId);
+    UserTask? GetUserReviewTask(int userId);
 }

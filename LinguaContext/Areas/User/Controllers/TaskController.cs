@@ -3,7 +3,6 @@ using LinguaContext.Models;
 using LinguaContext.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace LinguaContext.Areas.User.Controlles;
@@ -29,13 +28,12 @@ public class TaskController : Controller
 
         _memoryCache.Set("stat" + id.ToString(), statistics);
 
-        if (settings == null)
-            settings = new();
+        settings ??= new();
 
         TrainingSettingsVM model = new()
         {
-            Settings = settings,
-            Statistics = statistics
+            Settings    = settings,
+            Statistics  = statistics
         };
 
         return View(model);
@@ -45,6 +43,10 @@ public class TaskController : Controller
     public IActionResult Index(int id, TrainingSettingsVM model)
     {
         _memoryCache.Set("set" + id.ToString(), model.Settings);
+        
+        var factors = _unitOfWork.Users.GetPersonalFactorsByUserId(id);
+        factors ??= new();
+        _memoryCache.Set("fac" + id.ToString(), factors);
 
         return RedirectToAction(model.TrainingType, new { id = id});
     }
@@ -52,27 +54,59 @@ public class TaskController : Controller
     [HttpGet]
     public IActionResult StandardTraining(int id)
     {
+
         var settings   = (PersonalSettings?)    _memoryCache.Get("set"  + id.ToString());
         if (settings == null)
         {
             settings = _unitOfWork.Users.GetPersonalSettingsByUserId(id);
-            if (settings == null) settings = new();
+            settings ??= new();
         }
 
-        Sentence sentence = _unitOfWork.Sentences.GetRandomSentence();
+        var statistics = (PersonalStatistics?)_memoryCache.Get("stat" + id.ToString());
+        statistics ??= _unitOfWork.Statistics.GetCurrentStatistics(id);
 
-        while (!_unitOfWork.Tasks.IsAlreadyLearnt(id, sentence.SentenceId))
+        if ((statistics.NewBaseTasksNumber + statistics.NewUserTasksNumber) >= settings.NewDailyCardsNumber &&
+            statistics.ReviewedBaseTasksNumber >= statistics.ForReviewBaseTasksNumber)
+        {
+            return RedirectToAction("FinishTraining", new { id = id });
+        }
+
+        int ReviewRemainder = statistics.ForReviewBaseTasksNumber - statistics.ReviewedBaseTasksNumber;
+        int NewRemainder = settings.NewDailyCardsNumber - statistics.NewBaseTasksNumber - statistics.NewUserTasksNumber;
+
+        Sentence sentence;
+        UserTask? task;
+        bool isReviewed = false;
+
+        if (ReviewRemainder < NewRemainder)
         {
             sentence = _unitOfWork.Sentences.GetRandomSentence();
+            while (!_unitOfWork.Tasks.IsAlreadyLearnt(id, sentence.SentenceId))
+            {
+                sentence = _unitOfWork.Sentences.GetRandomSentence();
+            }
+            task = _unitOfWork.Tasks.CreateUserTask(id, sentence.SentenceId);
         }
-
-        UserTask task = _unitOfWork.Tasks.CreateUserTask(id, sentence.SentenceId);
+        else
+        {
+            isReviewed = true;
+            task = _unitOfWork.Tasks.GetBaseReviewTask(id);
+            if (task == null)
+            {
+                statistics.ReviewedBaseTasksNumber = statistics.ForReviewBaseTasksNumber;
+                return RedirectToAction("StandardTraining", new { id = id });
+            }
+            sentence = _unitOfWork.Sentences.GetFirstOrDefault(s => s.SentenceId == task.SentenceId)!;
+        }
+        
         _memoryCache.Set("task" + id.ToString(), task);
 
         StandardTrainingVM model = new StandardTrainingVM()
         {
             Sentence = sentence,
-            Settings = settings
+            Statistics = statistics,
+            Settings = settings,
+            IsReviewed = isReviewed,
         };
 
         return View(model);
@@ -82,25 +116,25 @@ public class TaskController : Controller
     public IActionResult StandardTraining(int id, StandardTrainingVM model)
     {
         UserTask? task = (UserTask?)_memoryCache.Get("task"+id.ToString());
-        if (task == null)
-        {
-            task = _unitOfWork.Tasks.GetUserTask(id, model.Sentence.SentenceId);
-        }
+        task ??= _unitOfWork.Tasks.GetUserTask(id, model.Sentence.SentenceId);
 
         int result = model.ButtonValue;
 
         task.RepetitionNumber++;
         task.LastReview = DateTime.Now;
+        if (model.WrongAnswer) task.WrongAnswersNumber++;
 
         double delay = (task.LastReview - task.NextReview).TotalDays;
         double easeFactor = task.EaseFactor;
 
-        var factors = _unitOfWork.Users.GetPersonalFactorsByUserId(task.UserId);
+
+        var factors = (PersonalFactors?) _memoryCache.Get("task" + id.ToString());
         if (factors == null)
         {
-            factors = new();
+            factors = _unitOfWork.Users.GetPersonalFactorsByUserId(task.UserId);
+            factors ??= new();
         }
-
+ 
         double interval = task.CurrentInterval;
 
         int interval1 = Convert.ToInt32(Math.Round(interval * factors.FailIntervalModifier));
@@ -144,9 +178,6 @@ public class TaskController : Controller
 
         task.NextReview = task.LastReview.AddDays(task.CurrentInterval);
 
-        if (model.WrongAnswer)
-            task.WrongAnswersNumber++;
-
         if (task.RepetitionNumber == 1)
         {
             _unitOfWork.Tasks.Create(task);
@@ -158,15 +189,26 @@ public class TaskController : Controller
         
         _unitOfWork.Save();
 
-        var statistics = (PersonalStatistics?)_memoryCache.Get("stat" + id.ToString());
-        if (statistics == null)
+        if (model.IsReviewed)
         {
-            statistics = _unitOfWork.Statistics.GetCurrentStatistics(id);
+            if (task.CurrentInterval > 1) 
+                model.Statistics.ReviewedBaseTasksNumber++;
         }
-        statistics.NewBaseTasksNumber++;
+        else
+        {
+            model.Statistics.NewBaseTasksNumber++;
+            if (task.CurrentInterval <= 1)
+                model.Statistics.ForReviewBaseTasksNumber++;
+        }
 
-        if ((statistics!.NewBaseTasksNumber + statistics!.NewUserTasksNumber) >= model.Settings.NewDailyCardsNumber && true)
-            //statistics.ReviewedBaseTasksNumber == statistics.ForReviewBaseTasksNumber)
+        _memoryCache.Set("set" + id.ToString(), model.Settings);
+        _memoryCache.Set("stat" + id.ToString(), model.Statistics);
+
+        _unitOfWork.Statistics.Update(model.Statistics);
+        _unitOfWork.Save();
+
+        if ((model.Statistics.NewBaseTasksNumber + model.Statistics.NewUserTasksNumber) >= model.Settings.NewDailyCardsNumber && 
+            model.Statistics.ReviewedBaseTasksNumber >= model.Statistics.ForReviewBaseTasksNumber)
         {
             return RedirectToAction("FinishTraining", new { id = id});
         }

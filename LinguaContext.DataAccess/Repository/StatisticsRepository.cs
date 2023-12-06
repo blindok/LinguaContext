@@ -28,19 +28,25 @@ public class StatisticsRepository : Repository<PersonalStatistics>, IStatisticsR
                 UserId = userId
             };
             Create(lastDayStat);
-            _db.SaveChanges();
-            return lastDayStat;
         }
         else
         {
-            return lastDayStat;
+            SetReviewValues(lastDayStat);
         }
+
+        _db.SaveChanges();
+        return lastDayStat;
     }
 
     new public void Create(PersonalStatistics statistics)
     {
+        SetReviewValues(statistics);
+        base.Create(statistics);
+    }
+
+    public void SetReviewValues(PersonalStatistics statistics)
+    {
         statistics.ForReviewUserTasksNumber = _tasks.CountUserTasksForReview(statistics.UserId);
         statistics.ForReviewBaseTasksNumber = _tasks.CountBaseTasksForReview(statistics.UserId);
-        base.Create(statistics);
     }
 }

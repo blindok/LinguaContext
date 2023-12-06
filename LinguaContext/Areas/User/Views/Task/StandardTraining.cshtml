@@ -5,7 +5,8 @@
 }
 
 <div class="row mt-5">
-    <div class="col-md-3"></div>
+    <div class="col-md-3">
+    </div>
     <div class="col-md-6">
         <div class="card p-3">
             <form id="answerForm" asp-route-id="@User.FindFirst("userid")!.Value" autocomplete="off" method="post" enctype="multipart/form-data">
@@ -18,11 +19,33 @@
                     <input asp-for="@Model.Sentence.AnswerTranslation" hidden />
                     <input asp-for="@Model.Sentence.ComplexityLevel" hidden />
                     <input asp-for="@Model.Sentence.AnswerWordsNumber" hidden />
+                    <input asp-for="@Model.Settings.UserId" hidden />
                     <input asp-for="@Model.Settings.DisplayTranslation" hidden />
                     <input asp-for="@Model.Settings.NewDailyCardsNumber" hidden />
                     <input asp-for="@Model.Settings.HighlightAnswer" hidden />
+                    <input asp-for="@Model.Statistics.Id" hidden />
+                    <input asp-for="@Model.Statistics.UserId" hidden />
+                    <input asp-for="@Model.Statistics.Date" hidden />
+                    <input asp-for="@Model.Statistics.NewBaseTasksNumber" hidden />
+                    <input asp-for="@Model.Statistics.NewUserTasksNumber" hidden />
+                    <input asp-for="@Model.Statistics.ForReviewBaseTasksNumber" hidden />
+                    <input asp-for="@Model.Statistics.ForReviewUserTasksNumber" hidden />
+                    <input asp-for="@Model.Statistics.ReviewedBaseTasksNumber" hidden />
+                    <input asp-for="@Model.Statistics.ReviewedUserTasksNumber" hidden />
+                    <input asp-for="@Model.Statistics.CreatedTasksNumber" hidden />
+                    <input asp-for="@Model.IsReviewed" hidden />
                     <input asp-for="@Model.WrongAnswer" id="wrongAnswer" hidden/>
                     <input id="answerInput" hidden/>
+                </div>
+
+                <div class="row mx-5">
+                    <div class="col-md-6">
+                        Новых карточек: @(@Model.Settings.NewDailyCardsNumber - @Model.Statistics.NewBaseTasksNumber - @Model.Statistics.NewUserTasksNumber)
+                        Повторение: @(@Model.Statistics.ForReviewBaseTasksNumber - @Model.Statistics.ReviewedBaseTasksNumber)
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <p class="h6">@(@Model.IsReviewed ? "Повтор" : "Новое")</p>
+                    </div>
                 </div>
 
                 <div class="text-center mt-5" id="taskDiv">
@@ -36,7 +59,7 @@
                                 string id = "answer" + i.ToString();
                                         <span class="h2">@chunks[i]</span>
                                         <span style="display: inline-block; width: @{@width}px;">
-                                            <input id="@id" type="text" oninput="CheckAnswer(@i, this.value, this.classList)"  class="form-control" style="font-size: 2.2em" />
+                                        <input id="@id" type="text" autocomplete="off"  oninput="CheckAnswer(@i, this.value, this.classList)" class="form-control" style="font-size: 2.2em" />
                                         </span>
                         }
 

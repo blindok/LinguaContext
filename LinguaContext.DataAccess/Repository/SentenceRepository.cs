@@ -7,7 +7,7 @@ namespace LinguaContext.DataAccess.Repository;
 
 public class SentenceRepository : Repository<Sentence>, ISentenceRepository
 {
-    internal DbSet<UserSentenceInfo> _dbSetUserSentences { get; set; }
+    internal readonly DbSet<UserSentenceInfo> _dbSetUserSentences;
 
     public SentenceRepository(ApplicationDbContext db) : base(db) 
     {

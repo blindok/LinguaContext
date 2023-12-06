@@ -1,6 +1,7 @@
 ﻿using LinguaContext.DataAccess.Data;
 using LinguaContext.DataAccess.Repository.Interfaces;
 using LinguaContext.Models;
+using System.Text.RegularExpressions;
 
 namespace LinguaContext.DataAccess.Repository;
 
@@ -54,5 +55,19 @@ public class UserTaskRepository : Repository<UserTask>, IUserTaskRepository
         DateTime today = DateTime.Now.Date;
         int n = _dbSet.Where(t => t.UserId == userId && t.NextReview.Date == today && t.IsPersonalTask).Count();
         return n;
+    }
+
+    public UserTask? GetBaseReviewTask(int userId)
+    {
+        DateTime today = DateTime.Now.Date;
+        UserTask? task = _dbSet.Where(t => t.UserId == userId && t.NextReview.Date == today && !t.IsPersonalTask).FirstOrDefault();
+        return task;
+    }
+
+    public UserTask? GetUserReviewTask(int userId)
+    {
+        DateTime today = DateTime.Now.Date;
+        UserTask? task = _dbSet.Where(t => t.UserId == userId && t.NextReview.Date == today && t.IsPersonalTask).FirstOrDefault();
+        return task;
     }
 }
