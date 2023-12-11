@@ -128,7 +128,7 @@ public class TaskController : Controller
         double easeFactor = task.EaseFactor;
 
 
-        var factors = (PersonalFactors?) _memoryCache.Get("task" + id.ToString());
+        var factors = (PersonalFactors?) _memoryCache.Get("fac" + id.ToString());
         if (factors == null)
         {
             factors = _unitOfWork.Users.GetPersonalFactorsByUserId(task.UserId);

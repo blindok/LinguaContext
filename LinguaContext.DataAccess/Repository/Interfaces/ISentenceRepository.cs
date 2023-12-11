@@ -12,4 +12,8 @@ public interface ISentenceRepository : IRepository<Sentence>
     void AddSentenceFromContext(Sentence sentence, int UserId, int ContextId, int SentencePosition, string? comment = null);
 
     Sentence? GetRandomSentence();
+
+    IEnumerable<Sentence> GetAllUsersSentencesByUserId(int userId);
+
+    UserSentenceInfo? GetUserSentenceInfo(int? sentenceId);
 }

@@ -50,9 +50,9 @@ public class Sentence
     [JsonPropertyName("complexityLevel")]
     public string? ComplexityLevel {  get; set; }
 
-    //public int? UserSentenceInfoId { get; set; }
+    public int? UserSentenceInfoId { get; set; }
 
-    //[ForeignKey("UserSentenceInfoId")]
-    //[ValidateNever]
-    //public UserSentenceInfo? UserSentenceInfo { get; set; }
+    [ForeignKey("UserSentenceInfoId")]
+    [ValidateNever]
+    public UserSentenceInfo? UserSentenceInfo { get; set; }
 }

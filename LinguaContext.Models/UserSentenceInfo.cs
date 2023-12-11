@@ -30,12 +30,10 @@ public class UserSentenceInfo
     [DisplayName("End Position in Source Text")]
     public int? EndPositionInText { get; set; }
 
-    [DisplayName("Number of answer words")]
-    public int? WordCounter { get; set; }
-
     [DisplayName("Word Position in Source Text")]
     public int? WordPositionInText { get; set; }
 
+    [MaxLength(200)]
     [DisplayName("Additional Information")]
     public string? Comment { get; set; }
 
@@ -43,9 +41,9 @@ public class UserSentenceInfo
     [ForeignKey("UserId")]
     public User User {  get; set; }
 
-    [ValidateNever]
-    [ForeignKey("SourceContextId")]
-    public Context? Context { get; set; }
+    //[ValidateNever]
+    //[ForeignKey("SourceContextId")]
+    //public Context? Context { get; set; }
 
     [ValidateNever]
     public Sentence? Sentence { get; set; } // Reference navigation to dependent

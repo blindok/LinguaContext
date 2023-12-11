@@ -14,4 +14,8 @@ public interface IUserTaskRepository : IRepository<UserTask>
 
     UserTask? GetBaseReviewTask(int userId);
     UserTask? GetUserReviewTask(int userId);
+
+    IEnumerable<UserTask>? GetAllUserTasks(int userId);
+    IEnumerable<UserTask>? GetAllBaseTasks(int userId);
+    IEnumerable<UserTask>? GetAllTasks(int userId);
 }

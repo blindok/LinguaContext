@@ -2,6 +2,7 @@
 using LinguaContext.DataAccess.Repository.Interfaces;
 using LinguaContext.Models;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace LinguaContext.DataAccess.Repository;
 
@@ -16,13 +17,13 @@ public class SentenceRepository : Repository<Sentence>, ISentenceRepository
 
     public IEnumerable<Sentence> GetAllUsersSentences()
     {
-        IQueryable<Sentence> sentences = _dbSet;//.Where(o => o.UserSentenceInfoId != null);
+        IQueryable<Sentence> sentences = _dbSet.Where(o => o.UserSentenceInfoId != null);
         return sentences;
     }
 
     public IEnumerable<Sentence> GetAllBuiltInSentences()
     {
-        IQueryable<Sentence> sentences = _dbSet;//.Where(o => o.UserSentenceInfoId == null);
+        IQueryable<Sentence> sentences = _dbSet.Where(o => o.UserSentenceInfoId == null);
         return sentences;
     }
 
@@ -41,7 +42,8 @@ public class SentenceRepository : Repository<Sentence>, ISentenceRepository
             Comment = comment
         };
         var infoFromDb = _dbSetUserSentences.Add(info);
-        //sentence.UserSentenceInfoId = infoFromDb.Entity.UserSentenceInfoId;
+        _db.SaveChanges();
+        sentence.UserSentenceInfoId = infoFromDb.Entity.UserSentenceInfoId;
         _dbSet.Add(sentence);
     }
 
@@ -57,12 +59,29 @@ public class SentenceRepository : Repository<Sentence>, ISentenceRepository
             //PositionInText = SentencePosition
         };
         var infoFromDb = _dbSetUserSentences.Add(info);
-        //sentence.UserSentenceInfoId = infoFromDb.Entity.UserSentenceInfoId;
+        _db.SaveChanges();
+        sentence.UserSentenceInfoId = infoFromDb.Entity.UserSentenceInfoId;
         _dbSet.Add(sentence);
     }
 
     public Sentence? GetRandomSentence()
     {
-        return _dbSet.OrderBy(r => EF.Functions.Random()).FirstOrDefault();
+        return _dbSet.Where(o => o.UserSentenceInfoId == null).OrderBy(r => EF.Functions.Random()).FirstOrDefault();
+    }
+
+    public IEnumerable<Sentence> GetAllUsersSentencesByUserId(int userId)
+    {
+        IQueryable<Sentence> sentences = _dbSet.Where(o => o.UserSentenceInfoId != null);
+        
+        sentences = sentences.Where(s => s.UserSentenceInfo!.UserId == userId);
+
+        return sentences;
+    }
+
+    public UserSentenceInfo? GetUserSentenceInfo(int? id)
+    {
+        var info = _dbSetUserSentences.FirstOrDefault(i => i.UserSentenceInfoId == id);
+
+        return info;
     }
 }

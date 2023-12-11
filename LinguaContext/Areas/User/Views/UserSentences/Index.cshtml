@@ -1,0 +1,142 @@
+﻿@model SentenceVM
+
+@{
+    ViewData["Title"] = "Предложения";
+}
+
+<div class="row mt-5">
+    <div class="col-md-10 offset-md-2">
+        <partial name="_NavBarPartial" />
+        @if (ViewData["display"] == "base")
+        {
+            <table id="tblDataTasks" class="table table-bordered table-hover align-middle">
+                <thead class="text-center">
+                    <tr>
+                        <th>Sentence</th>
+                        <th>Translation</th>
+                        <th>Answer</th>
+                        <th>First Review</th>
+                        <th>Last Review</th>
+                        <th>Next Review</th>
+                        <th>Current Interval</th>
+                        <th>Repeatition Number</th>
+                    </tr>
+                </thead>
+            </table>
+        }
+        else if (ViewData["display"] == "custom")
+        {
+            <div class="row">
+                <div class="col-md-3 offset-md-7">
+                    <button id="addingBTN" onclick="OpenAddingWindow()" type="button" class="btn btn-primary"><i class="bi bi-plus-circle"></i> </button>
+                </div>
+            </div>
+            <table id="tblDataUserSentences" class="table table-bordered table-hover align-middle">
+                <thead class="text-center">
+                    <tr>
+                        <th>Sentence</th>
+                        <th>Translation</th>
+                        <th>Answer</th>
+                        <th>Answer Translation</th>
+                        <th>Created At</th>
+                        <th>Last Edited At</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        }
+    </div>
+</div>
+
+
+<div id="popupBack" class="bg-primary text-center" style="opacity: 0.65; display: none; width: 100%; height: 100%;position: absolute; top: 0; left: 0;">
+</div>
+
+<div id="popup" class="bg-transparent" style="display: none; width: 100%; height: 100%;position: absolute; top: 0; left: 0;">
+    <div class="card" style="width:46%; left:27%; top: 10%">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-6 text-start">
+                    <p class="h4">Добавить предложение</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button id="closeBtn" onclick="CloseAddingWindow()" type="button" class="btn btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <form method="post" asp-controller="UserSentences" asp-action="AddSentence" enctype="multipart/form-data" class="px-3">
+                <div class="form-control border-0 col-md-6 mb-2">
+                    <label asp-for="Sentence" class="ps-2" style="font-size: 1.2em">Предложение</label>
+                    <input id="sentence" autocomplete="off" type="text" asp-for="Sentence" class="form-control" />
+                    <span asp-validation-for="Sentence" class="text-danger"></span>
+                </div>
+                <div class="form-control border-0 col-md-6 mb-2">
+                    <label asp-for="Translation" class="ps-2" style="font-size: 1.2em">Перевод</label>
+                    <input id="trans" autocomplete="off" type="text" asp-for="Translation" class="form-control" />
+                    <span asp-validation-for="Translation" class="text-danger"></span>
+                </div>
+                <div class="form-control border-0 col-md-6 mb-2">
+                    <label asp-for="Word" class="ps-2" style="font-size: 1.2em">Слово</label>
+                    <input id="word" autocomplete="off" type="text" asp-for="Word" class="form-control"  />
+                    <span asp-validation-for="Word" class="text-danger"></span>
+                </div>
+                <div class="form-control border-0 col-md-6 mb-2">
+                    <label asp-for="WordTranslation" class="ps-2" style="font-size: 1.2em">Перевод слова</label>
+                    <input id="wordTrans" autocomplete="off" asp-for="WordTranslation" class="form-control" />
+                    <span asp-validation-for="WordTranslation" class="text-danger"></span>
+                </div>
+                <div class="form-control border-0 col-md-6 mb-2">
+                    <label asp-for="Comment" class="ps-2" style="font-size: 1.2em">Комментарий</label>
+                    <input id="comment" autocomplete="off" type="text" asp-for="Comment" class="form-control" />
+                    <span asp-validation-for="Comment" class="text-danger"></span>
+                </div>
+                <div class="row px-5 mt-3">
+                    <button type="submit" class="btn btn-dark">Начать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function OpenAddingWindow() {
+        document.getElementById("popupBack").style.display = 'block';
+        document.getElementById("popup").style.display = 'block';
+    }
+
+    function CloseAddingWindow() {
+        document.getElementById("popupBack").style.display = 'none';
+        document.getElementById("popup").style.display = 'none';
+    }
+</script>
+
+
+<script>
+    function getSelectionText() {
+        var text = "";
+        if (window.getSelection) {
+            text = window.getSelection().toString();
+        } else if (document.selection && document.selection.type != "Control") {
+            text = document.selection.createRange().text;
+        }
+        return text;
+    }
+
+    document.getElementById("sentence").onmouseup = document.getElementById("sentence").onkeyup = document.getElementById("sentence").onselectionchange = function () {
+        document.getElementById("word").value = getSelectionText();
+    }
+</script>
+
+@section Scripts{
+    @switch (ViewData["display"])
+    {
+    case "base":
+        <script src="~/js/Tasks.js"></script>
+        break;
+    case "custom":
+        <script src="~/js/UserSentences.js"></script>
+        break;
+    }
+    <partial name="_ValidationScriptsPartial" />
+}

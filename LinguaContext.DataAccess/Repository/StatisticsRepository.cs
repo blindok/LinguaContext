@@ -18,7 +18,7 @@ public class StatisticsRepository : Repository<PersonalStatistics>, IStatisticsR
     {
         DateOnly today = DateOnly.FromDateTime(DateTime.Now);
 
-        var lastDayStat = GetFirstOrDefault(s => s.Date == today);
+        var lastDayStat = GetFirstOrDefault(s => s.Date == today && s.UserId == userId);
 
         if (lastDayStat == null)
         {
