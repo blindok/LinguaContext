@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LInguaContext.App\LInguaContext.App.csproj" />
     <ProjectReference Include="..\LinguaContext.DataAccess\LinguaContext.DataAccess.csproj" />
     <ProjectReference Include="..\LinguaContext.Models\LinguaContext.Models.csproj" />
     <ProjectReference Include="..\LinguaContext.Utility\LinguaContext.Utility.csproj" />

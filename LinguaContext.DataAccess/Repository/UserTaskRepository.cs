@@ -21,11 +21,6 @@ public class UserTaskRepository : Repository<UserTask>, IUserTaskRepository
         };
     } 
 
-    public UserTask? GetNextUserTaskByUserId(int UserId)
-    {
-        throw new NotImplementedException();
-    }
-
     public UserTask GetUserTask(int userId, int sentenceId)
     {
         UserTask? task = GetFirstOrDefault(t => t.UserId == userId && t.SentenceId == sentenceId);

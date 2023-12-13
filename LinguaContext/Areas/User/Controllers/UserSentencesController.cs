@@ -49,6 +49,11 @@ public class UserSentencesController : Controller
             AnswerWordsNumber = 1
         };
         _unitOfWork.Sentences.AddUserSentence(sentence, id, model.Comment);
+
+        var stat = _unitOfWork.Statistics.GetCurrentStatistics(id);
+        stat.CreatedTasksNumber += 1;
+        _unitOfWork.Statistics.Update(stat);
+
         _unitOfWork.Save();
         return RedirectToAction("CustomSentences");
     }

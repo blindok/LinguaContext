@@ -1,0 +1,230 @@
+﻿@model CustomTrainingVM
+
+@{
+    ViewData["Title"] = "Тренировка";
+}
+
+<div class="row mt-5">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-6">
+        <div class="card p-3">
+            <form id="answerForm" asp-route-id="@User.FindFirst("userid")!.Value" autocomplete="off" method="post" enctype="multipart/form-data">
+                <div>
+                    <input asp-for="@Model.Sentence.SentenceId" hidden />
+                    <input asp-for="@Model.Sentence.Phrase" hidden />
+                    <input asp-for="@Model.Sentence.FormattedPhrase" hidden />
+                    <input asp-for="@Model.Sentence.Translation" hidden />
+                    <input asp-for="@Model.Sentence.Answer" id="answerCheck" hidden />
+                    <input asp-for="@Model.Sentence.AnswerTranslation" hidden />
+                    <input asp-for="@Model.Sentence.ComplexityLevel" hidden />
+                    <input asp-for="@Model.Sentence.AnswerWordsNumber" hidden />
+                    <input asp-for="@Model.Settings.UserId" hidden />
+                    <input asp-for="@Model.Settings.DisplayTranslation" hidden />
+                    <input asp-for="@Model.Settings.NewDailyCardsNumber" hidden />
+                    <input asp-for="@Model.Settings.HighlightAnswer" hidden />
+                    <input asp-for="@Model.Statistics.Id" hidden />
+                    <input asp-for="@Model.Statistics.UserId" hidden />
+                    <input asp-for="@Model.Statistics.Date" hidden />
+                    <input asp-for="@Model.Statistics.NewBaseTasksNumber" hidden />
+                    <input asp-for="@Model.Statistics.NewUserTasksNumber" hidden />
+                    <input asp-for="@Model.Statistics.ForReviewBaseTasksNumber" hidden />
+                    <input asp-for="@Model.Statistics.ForReviewUserTasksNumber" hidden />
+                    <input asp-for="@Model.Statistics.ReviewedBaseTasksNumber" hidden />
+                    <input asp-for="@Model.Statistics.ReviewedUserTasksNumber" hidden />
+                    <input asp-for="@Model.Statistics.CreatedTasksNumber" hidden />
+                    <input asp-for="@Model.IsReviewed" hidden />
+                    <input asp-for="@Model.WrongAnswer" id="wrongAnswer" hidden />
+                    <input id="answerInput" hidden />
+                </div>
+
+                <div class="row mx-5">
+                    <div class="col-md-6">
+                        Новых карточек: @(@Model.Settings.NewDailyCardsNumber - @Model.Statistics.NewBaseTasksNumber - @Model.Statistics.NewUserTasksNumber)
+                        Повторение: @(@Model.Statistics.ForReviewUserTasksNumber - @Model.Statistics.ReviewedUserTasksNumber)
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <p class="h6">@(@Model.IsReviewed ? "Повтор" : "Новое")</p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-5" id="taskDiv">
+                    @{
+                        var chunks = Model.Sentence.FormattedPhrase.Split('~');
+                        var wordsNumber = Model.Sentence.AnswerWordsNumber;
+                        int width = Model.Sentence.Answer.Length * 25 / wordsNumber;
+
+                        for (int i = 0; i < wordsNumber; ++i)
+                        {
+                            string id = "answer" + i.ToString();
+                            <span class="h2">@chunks[i]</span>
+                            <span style="display: inline-block; width: @{@width}px;">
+                                <input id="@id" type="text" autocomplete="off" oninput="CheckAnswer(@i, this.value, this.classList)" class="form-control" style="font-size: 2.2em" />
+                            </span>
+                        }
+
+                        <span class="h2">@chunks[wordsNumber]</span>
+                    }
+                </div>
+
+                <div class="text-center mt-2" style="height: 30px">
+                    <p id="translation" class="h5 text-muted" style="display: none">@Model.Sentence.Translation</p>
+                    <button id="tranlateBtn" style="display: none" type="button" class="btn btn-light">...</button>
+                    <p id="comment" class="h6 text-muted">@Model.Comment</p>
+                </div>
+
+                <div id="resultDiv" class="row text-center my-3">
+                    <p class="h2 text-danger" id="resultDiv2" style="display: none"></p>
+                    <p class="h2 text-primary" id="resultDiv3" style="display: none"><i class="bi bi-arrow-right"></i></p>
+                    <p class="h2 text-success" id="resultDiv1" style="display: none">@Model.Sentence.Answer</p>
+                    <p class="h2 text-success" id="resultDiv4" style="display: none">Right!</p>
+                </div>
+
+
+                <div class="row" id="submitButtonDiv">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                        <button type="button" id="submitButton" onclick="Result(@Model.Sentence.AnswerWordsNumber)" class="btn border border-dark btn-secondary form-control">Ответить</button>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+
+                <div class="row" id="submitButtons" style="display: none">
+                    <div class="col-md-3" id="btn1">
+                        <button id="fail" name="ButtonValue" value="1" type="submit" class="btn border border-dark btn-danger form-control">Повтор / 1</button>
+                    </div>
+                    <div class="col-md-3" id="btn2">
+                        <button id="hard" name="ButtonValue" value="2" type="submit" class="btn border border-dark btn-warning form-control">Тяжело / 2</button>
+                    </div>
+                    <div class="col-md-3" id="btn3">
+                        <button id="good" name="ButtonValue" value="3" type="submit" class="btn border border-dark btn-info form-control">Хорошо / 3</button>
+                    </div>
+                    <div class="col-md-3" id="btn4">
+                        <button id="easy" name="ButtonValue" value="4" type="submit" class="btn border border-dark btn-success form-control">Отлично / 4</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-3"></div>
+</div>
+
+<script>
+    const form = document.getElementById('answerForm');
+    form.addEventListener('keypress', function (e) {
+        if (e.keyCode === 13 || e.keyCode === 32) {
+            e.preventDefault();
+        }
+    });
+
+    document.onkeypress = function (e) {
+        e = e || window.event;
+        if (e.keyCode == 49) {
+            document.getElementById("fail").click();
+        }
+        else if (e.keyCode == 50) {
+            document.getElementById("hard").click();
+        }
+        else if (e.keyCode == 51) {
+            document.getElementById("good").click();
+        }
+        else if (e.keyCode == 52) {
+            document.getElementById("easy").click();
+        }
+    };
+</script>
+
+<script>
+
+    function Result(N) {
+
+        let userInput = "";
+
+        for (let i = 0; i < N; i++) {
+            let element = document.getElementById("answer" + i.toString());
+            if (element) {
+                userInput += element.value + " ";
+                element.setAttribute("disabled", "");
+            }
+        }
+
+        userInput = userInput.slice(0, -1);
+        document.getElementById('answerInput').value = userInput;
+
+        document.getElementById("submitButtons").style.display = 'flex';
+        document.getElementById("submitButtonDiv").style.display = 'none';
+        document.getElementById("resultDiv").style.display = 'block';
+
+        if (document.getElementById('answerCheck').value.toLowerCase() == userInput.toLowerCase()) {
+            document.getElementById("resultDiv4").style.display = 'inline';
+        } else {
+            document.getElementById("wrongAnswer").checked = 1;
+            document.getElementById("resultDiv2").innerHTML = document.getElementById('answerInput').value;
+            document.getElementById("resultDiv1").style.display = 'inline';
+            document.getElementById('answerInput').value = document.getElementById('answerCheck').value;
+            document.getElementById("resultDiv2").style.display = 'inline';
+            document.getElementById("resultDiv3").style.display = 'inline';
+        }
+    }
+</script>
+
+@for (int i = 0; i < Model.Sentence.AnswerWordsNumber; ++i)
+{
+    string id = "answer" + i.ToString();
+    <script>
+        document.getElementById("@id")
+            .addEventListener("keyup", function (event) {
+                event.preventDefault();
+                if (event.keyCode === 13) {
+                    document.getElementById("submitButton").click();
+                }
+            });
+    </script>
+}
+
+@if (@Model.Settings.HighlightAnswer)
+{
+    <script>
+
+        let answer = document.getElementById('answerCheck').value.toLowerCase().split(" ");
+
+        function CheckAnswer(id, value, classList) {
+            value = value.toLowerCase();
+            let n = value.length;
+            if (n == 0) {
+                classList.remove("text-success");
+                classList.remove("text-danger");
+                return;
+            }
+
+            let answerWord = answer[id].substring(0, n);
+
+            if (value == answerWord) {
+                classList.add("text-success");
+                classList.remove("text-danger");
+            }
+            else {
+                classList.remove("text-success");
+                classList.add("text-danger");
+            }
+        }
+    </script>
+}
+
+@if (Model.Settings.DisplayTranslation)
+{
+    <script>
+        document.getElementById("translation").style.display = 'inline';
+    </script>
+}
+else
+{
+    <script>
+        document.getElementById("tranlateBtn").style.display = 'inline';
+
+        document.getElementById("tranlateBtn").onclick = function () {
+            document.getElementById("tranlateBtn").style.display = 'none';
+            document.getElementById("translation").style.display = 'inline';
+        }
+    </script>
+}

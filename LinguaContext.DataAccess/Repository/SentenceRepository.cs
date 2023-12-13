@@ -101,4 +101,16 @@ public class SentenceRepository : Repository<Sentence>, ISentenceRepository
         _dbSet.Update(sentence);
         _dbSetUserSentences.Update(info);
     }
+
+    public Sentence? GetRandomUserSentence(int userId)
+    {
+        return _dbSet.Where(o => o.UserSentenceInfoId != null).Include("UserSentenceInfo")
+            .Where(s => s.UserSentenceInfo.UserId == userId).OrderBy(r => EF.Functions.Random()).FirstOrDefault();
+    }
+
+    public int CountUserPersonalSentences(int userId)
+    {
+        return _dbSet.Where(o => o.UserSentenceInfoId != null).Include("UserSentenceInfo")
+            .Where(s => s.UserSentenceInfo.UserId == userId).Count();
+    }
 }

@@ -57,12 +57,8 @@
                 @* <a asp-controller="Task" asp-action="StandardTraining" asp-route-id="@User.FindFirst("userid")!.Value" id="standartBTN" name="TrainingType" value="StandardTraining" class="btn btn-primary btn-lg form-control">Стандартная тренировка</a> *@
             </div>
             <div class="my-3 mx-5">
-                <button id="customBTN" @* onclick="Redirect('CustomTraining')" *@ class="btn btn-primary btn-lg form-control">Кастомная тренировка</button>
+                <button id="customBTN" onclick="Redirect('CustomTraining')" class="btn btn-primary btn-lg form-control">Кастомная тренировка</button>
                 @* <a asp-controller="Task" asp-action="StandardTraining" asp-route-id="@User.FindFirst("userid")!.Value" name="TrainingType" value="CustomTraining" class="btn btn-primary btn-lg form-control">Кастомная тренировка</a> *@
-            </div>
-            <div class="my-3 mx-5">
-                <button id="BTN" @* onclick="Redirect('CustomTraining')" *@ class="btn btn-primary btn-lg form-control">Смешанная тренировка</button>
-                @* <a asp-controller="Task" asp-action="StandardTraining" asp-route-id="@User.FindFirst("userid")!.Value" name="TrainingType" value="3" class="btn btn-primary btn-lg form-control">Смешанная тренировка</a> *@
             </div>
         </div>
     </div>

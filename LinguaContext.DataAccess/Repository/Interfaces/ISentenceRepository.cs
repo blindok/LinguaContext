@@ -14,8 +14,11 @@ public interface ISentenceRepository : IRepository<Sentence>
     void RemoveUserSentence(int id);
 
     Sentence? GetRandomSentence();
+    Sentence? GetRandomUserSentence(int userId);
 
     IEnumerable<Sentence> GetAllUsersSentencesByUserId(int userId);
 
     UserSentenceInfo? GetUserSentenceInfo(int? sentenceId);
+
+    int CountUserPersonalSentences(int userId);
 }
