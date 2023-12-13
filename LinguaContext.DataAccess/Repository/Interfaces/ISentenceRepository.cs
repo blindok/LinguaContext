@@ -10,6 +10,8 @@ public interface ISentenceRepository : IRepository<Sentence>
     void AddSentence(Sentence sentence);
     void AddUserSentence(Sentence sentence, int UserId, string? comment = null);
     void AddSentenceFromContext(Sentence sentence, int UserId, int ContextId, int SentencePosition, string? comment = null);
+    void UpdateUserSentence(Sentence sentence, UserSentenceInfo info);
+    void RemoveUserSentence(int id);
 
     Sentence? GetRandomSentence();
 

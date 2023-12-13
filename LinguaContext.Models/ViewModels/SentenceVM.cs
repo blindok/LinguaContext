@@ -21,4 +21,6 @@ public class SentenceVM
 
     [MaxLength(200)]
     public string? Comment { get; set; }
+
+    public int Id { get; set; }
 }

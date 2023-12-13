@@ -16,7 +16,7 @@ function loadDataTable() {
                 data: 'sentence.sentenceId',
                 render: function (data) {
                     return `<div class="btn-group">
-                              <button type="button" class="btn btn-primary"><i class="bi bi-pencil-square"></i></button>
+                              <a href="/User/UserSentences/EditSentence?id=${data}" type="button" class="btn btn-primary"><i class="bi bi-pencil-square"></i></a>
                               <a href="/User/UserSentences/DeleteSentence?id=${data}" type="button" class="btn btn-primary"><i class="bi bi-trash-fill"></i></a>
                             </div>`
                 },

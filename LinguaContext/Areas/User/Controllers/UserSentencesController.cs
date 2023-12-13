@@ -4,6 +4,7 @@ using LinguaContext.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace LinguaContext.Areas.User.Controllers;
 
@@ -12,10 +13,12 @@ namespace LinguaContext.Areas.User.Controllers;
 public class UserSentencesController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMemoryCache _memoryCache;
 
-    public UserSentencesController(IUnitOfWork unitOfWork)
+    public UserSentencesController(IUnitOfWork unitOfWork, IMemoryCache memoryCache)
     {
         _unitOfWork = unitOfWork;
+        _memoryCache = memoryCache;
     }
 
     [HttpGet]
@@ -26,7 +29,7 @@ public class UserSentencesController : Controller
     }
 
     [HttpGet]
-    public IActionResult CustomSentences(int id)
+    public IActionResult CustomSentences()
     {
         ViewData["display"] = "custom";
         return View("Index");
@@ -53,6 +56,50 @@ public class UserSentencesController : Controller
     [HttpGet]
     public IActionResult DeleteSentence(int id)
     {
+        _unitOfWork.Sentences.RemoveUserSentence(id);
+        _unitOfWork.Save();
+        return RedirectToAction("CustomSentences");
+    }
+
+    [HttpGet]
+    public IActionResult EditSentence(int id)
+    {
+        Sentence sentence = _unitOfWork.Sentences.GetFirstOrDefault(s => s.SentenceId == id)!;
+        UserSentenceInfo userInfo = _unitOfWork.Sentences.GetUserSentenceInfo(sentence.UserSentenceInfoId)!;
+
+        _memoryCache.Set("sen" + id.ToString(), sentence);
+        _memoryCache.Set("inf" + id.ToString(), userInfo);
+
+        SentenceVM model = new()
+        {
+            Sentence = sentence.Phrase,
+            Translation = sentence.Translation,
+            Word = sentence.Answer,
+            WordTranslation = sentence.AnswerTranslation,
+            Comment = userInfo.Comment,
+            Id = id
+        };
+        ViewData["display"] = "custom";
+        ViewData["edit"] = "true";
+        return View("Index", model);
+    }
+
+    [HttpPost]
+    public IActionResult EditSentence(SentenceVM model)
+    {
+        var sentence = (Sentence)_memoryCache.Get("sen" + model.Id.ToString())!;
+        var info = (UserSentenceInfo)_memoryCache.Get("inf" + model.Id.ToString())!;
+
+        sentence.Phrase = model.Sentence;
+        sentence.Translation = model.Translation;
+        sentence.Answer = model.Word;
+        sentence.AnswerTranslation = model.WordTranslation;
+        info.Comment = model.Comment;
+        info.LastEditedAt = DateTime.Now;
+
+        _unitOfWork.Sentences.UpdateUserSentence(sentence, info);
+        _unitOfWork.Save();
+
         return RedirectToAction("CustomSentences");
     }
 

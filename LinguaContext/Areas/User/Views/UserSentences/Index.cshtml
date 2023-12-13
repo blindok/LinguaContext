@@ -26,9 +26,9 @@
         }
         else if (ViewData["display"] == "custom")
         {
-            <div class="row">
-                <div class="col-md-3 offset-md-7">
-                    <button id="addingBTN" onclick="OpenAddingWindow()" type="button" class="btn btn-primary"><i class="bi bi-plus-circle"></i> </button>
+            <div class="row mb-3">
+                <div class="col-md-3 offset-md-9 text-end">
+                    <button id="addingBTN" onclick="OpenAddingWindow()" type="button" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Добавить Предложение</button>
                 </div>
             </div>
             <table id="tblDataUserSentences" class="table table-bordered table-hover align-middle">
@@ -48,24 +48,24 @@
     </div>
 </div>
 
-
 <div id="popupBack" class="bg-primary text-center" style="opacity: 0.65; display: none; width: 100%; height: 100%;position: absolute; top: 0; left: 0;">
 </div>
 
 <div id="popup" class="bg-transparent" style="display: none; width: 100%; height: 100%;position: absolute; top: 0; left: 0;">
     <div class="card" style="width:46%; left:27%; top: 10%">
         <div class="card-header">
-            <div class="row">
-                <div class="col-md-6 text-start">
+            <div class="row py-2">
+                <div class="col-md-10 text-start">
                     <p class="h4">Добавить предложение</p>
                 </div>
-                <div class="col-md-6 text-end">
+                <div class="col-md-2 text-end">
                     <button id="closeBtn" onclick="CloseAddingWindow()" type="button" class="btn btn-close btn-close-white" data-bs-dismiss="alert"></button>
                 </div>
             </div>
         </div>
         <div class="card-body">
             <form method="post" asp-controller="UserSentences" asp-action="AddSentence" enctype="multipart/form-data" class="px-3">
+                <input asp-for="Id" hidden />
                 <div class="form-control border-0 col-md-6 mb-2">
                     <label asp-for="Sentence" class="ps-2" style="font-size: 1.2em">Предложение</label>
                     <input id="sentence" autocomplete="off" type="text" asp-for="Sentence" class="form-control" />
@@ -92,12 +92,76 @@
                     <span asp-validation-for="Comment" class="text-danger"></span>
                 </div>
                 <div class="row px-5 mt-3">
-                    <button type="submit" class="btn btn-dark">Начать</button>
+                    <button type="submit" class="btn btn-dark">Добавить</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+@if (ViewData["edit"] == "true")
+{
+    <div id="popupBackEdit" class="bg-primary text-center" style="opacity: 0.65; display: block; width: 100%; height: 100%;position: absolute; top: 0; left: 0;">
+    </div>
+
+    <div id="popupEdit" class="bg-transparent" style="display: block; width: 100%; height: 100%;position: absolute; top: 0; left: 0;">
+        <div class="card" style="width:46%; left:27%; top: 10%">
+            <div class="card-header">
+                <div class="row py-2">
+                    <div class="col-md-10 text-start">
+                        <p class="h4">Редактировать предложение</p>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <a asp-controller="UserSentences" asp-action="CustomSentences" type="button" class="btn btn-close btn-close-white" ></a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-controller="UserSentences" asp-action="EditSentence" enctype="multipart/form-data" class="px-3">
+                    <input asp-for="Id" hidden />
+                    <div class="form-control border-0 col-md-6 mb-2">
+                        <label asp-for="Sentence" class="ps-2" style="font-size: 1.2em">Предложение</label>
+                        <input id="sentenceEdit" autocomplete="off" type="text" asp-for="Sentence" class="form-control" />
+                        <span asp-validation-for="Sentence" class="text-danger"></span>
+                    </div>
+                    <div class="form-control border-0 col-md-6 mb-2">
+                        <label asp-for="Translation" class="ps-2" style="font-size: 1.2em">Перевод</label>
+                        <input id="transEdit" autocomplete="off" type="text" asp-for="Translation" class="form-control" />
+                        <span asp-validation-for="Translation" class="text-danger"></span>
+                    </div>
+                    <div class="form-control border-0 col-md-6 mb-2">
+                        <label asp-for="Word" class="ps-2" style="font-size: 1.2em">Слово</label>
+                        <input id="wordEdit" autocomplete="off" type="text" asp-for="Word" class="form-control" />
+                        <span asp-validation-for="Word" class="text-danger"></span>
+                    </div>
+                    <div class="form-control border-0 col-md-6 mb-2">
+                        <label asp-for="WordTranslation" class="ps-2" style="font-size: 1.2em">Перевод слова</label>
+                        <input id="wordTransEdit" autocomplete="off" asp-for="WordTranslation" class="form-control" />
+                        <span asp-validation-for="WordTranslation" class="text-danger"></span>
+                    </div>
+                    <div class="form-control border-0 col-md-6 mb-2">
+                        <label asp-for="Comment" class="ps-2" style="font-size: 1.2em">Комментарий</label>
+                        <input id="commentEdit" autocomplete="off" type="text" asp-for="Comment" class="form-control" />
+                        <span asp-validation-for="Comment" class="text-danger"></span>
+                    </div>
+                    <div class="row px-5 mt-3">
+                        <button type="submit" class="btn btn-dark">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("sentenceEdit").onmouseup = document.getElementById("sentenceEdit").onkeyup = document.getElementById("sentenceEdit").onselectionchange = function () {
+            document.getElementById("wordEdit").value = getSelectionText();
+        }
+
+        document.getElementById("transEdit").onmouseup = document.getElementById("transEdit").onkeyup = document.getElementById("transEdit").onselectionchange = function () {
+            document.getElementById("wordTransEdit").value = getSelectionText();
+        }
+    </script>
+}
 
 <script>
     function OpenAddingWindow() {
@@ -110,7 +174,6 @@
         document.getElementById("popup").style.display = 'none';
     }
 </script>
-
 
 <script>
     function getSelectionText() {
@@ -125,6 +188,10 @@
 
     document.getElementById("sentence").onmouseup = document.getElementById("sentence").onkeyup = document.getElementById("sentence").onselectionchange = function () {
         document.getElementById("word").value = getSelectionText();
+    }
+
+    document.getElementById("trans").onmouseup = document.getElementById("trans").onkeyup = document.getElementById("trans").onselectionchange = function () {
+        document.getElementById("wordTrans").value = getSelectionText();
     }
 </script>
 

@@ -84,4 +84,21 @@ public class SentenceRepository : Repository<Sentence>, ISentenceRepository
 
         return info;
     }
+
+    public void RemoveUserSentence(int id)
+    {
+        var sentence = _dbSet.FirstOrDefault(s => s.SentenceId == id);
+        if (sentence is not null)
+        {
+            var info = _dbSetUserSentences.FirstOrDefault(i => i.UserSentenceInfoId == sentence.UserSentenceInfoId);
+            _dbSetUserSentences.Remove(info!);
+            _dbSet.Remove(sentence);
+        }
+    }
+
+    public void UpdateUserSentence(Sentence sentence, UserSentenceInfo info)
+    {
+        _dbSet.Update(sentence);
+        _dbSetUserSentences.Update(info);
+    }
 }
