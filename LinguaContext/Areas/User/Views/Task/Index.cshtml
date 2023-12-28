@@ -9,59 +9,90 @@
     int ForReviewTasksNumber = @Model.Statistics.ForReviewBaseTasksNumber + @Model.Statistics.ForReviewUserTasksNumber;
 }
 
-<div class="mt-5">
-    <div class="row">
-        <div class="col-md-2 offset-md-4">
-            <div class="card rounded">
-                <div class="card-body p-2">
-                    <div class="text-center">
-                        <div class="" style="position:absolute; left: 85%">
-                            <a asp-controller="PersonalPage" asp-action="EditPersonalSettings" asp-route-id="@User.FindFirst("userid")!.Value"><i class="bi bi-gear"></i></a>
+<div class="row mt-5">
+    <div class="col-md-5 offset-md-1">
+        <ejs-chart id="lineContainer">
+            <e-chart-primaryxaxis valueType="@Syncfusion.EJ2.Charts.ValueType.DateTime" labelFormat="dd" intervalType="@Syncfusion.EJ2.Charts.IntervalType.Days" edgeLabelPlacement="@Syncfusion.EJ2.Charts.EdgeLabelPlacement.Shift">
+                <e-majorgridlines width="0"></e-majorgridlines>
+            </e-chart-primaryxaxis>
+
+            <e-chart-primaryyaxis minimum="0" maximum="30" interval="5" labelFormat="{value}">
+                <e-linestyle width="0"></e-linestyle>
+                <e-majorticklines width="0"></e-majorticklines>
+            </e-chart-primaryyaxis>
+
+            <e-chart-chartarea>
+                <e-chartarea-border width="0"></e-chartarea-border>
+            </e-chart-chartarea>
+
+            <e-chart-legendsettings enableHighlight="true"></e-chart-legendsettings>
+            <e-chart-tooltipsettings enable="true"></e-chart-tooltipsettings>
+
+            <e-series-collection>
+                <e-series dataSource="ViewBag.ChartPoints" name="Добавлено" xName="Period" opacity=0.5 width=2 yName="Added" type="@Syncfusion.EJ2.Charts.ChartSeriesType.SplineArea">
+                    <e-series-border width="2"></e-series-border>
+                    <e-series-marker visible="true" height="6" width="6" isFilled="true" shape="@Syncfusion.EJ2.Charts.ChartShape.Circle"></e-series-marker>
+                </e-series>
+                <e-series dataSource="ViewBag.ChartPoints" name="Выучено" xName="Period" opacity=0.5 width=2 yName="Started" type="@Syncfusion.EJ2.Charts.ChartSeriesType.SplineArea">
+                    <e-series-border width="2"></e-series-border>
+                    <e-series-marker visible="true" height="7" width="7" isFilled="true" shape="@Syncfusion.EJ2.Charts.ChartShape.Circle"></e-series-marker>
+                </e-series>
+                <e-series dataSource="ViewBag.ChartPoints" name="Повторено" xName="Period" opacity=0.5 width=2 yName="Reviewed" type="@Syncfusion.EJ2.Charts.ChartSeriesType.SplineArea">
+                    <e-series-border width="2"></e-series-border>
+                    <e-series-marker visible="true" height="7" width="7" isFilled="true" shape="@Syncfusion.EJ2.Charts.ChartShape.Circle"></e-series-marker>
+                </e-series>
+            </e-series-collection>
+        </ejs-chart>
+    </div>
+    <div class="col-md-4 offset-md-1">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card rounded">
+                    <div class="card-body p-2">
+                        <div class="text-center">
+                            <div class="" style="position:absolute; left: 85%">
+                                <a asp-controller="PersonalPage" asp-action="EditPersonalSettings" asp-route-id="@User.FindFirst("userid")!.Value"><i class="bi bi-gear"></i></a>
+                            </div>
+                            <p class="lead text-center m-0" style="font-size: 3em; display: inline-flex">
+                                @NewTasksNumber
+                            </p>
+                            <p class="lead text-center m-0" style="font-size: 1.2em; display: inline-flex">
+                                из @Model.Settings.NewDailyCardsNumber
+                            </p>
                         </div>
-                        <p class="lead text-center m-0" style="font-size: 3em; display: inline-flex">
-                            @NewTasksNumber
+                        <p class="lead card-title text-center m-0">новых карт пройдено сегодня</p>
+                        <p class="lead text-center m-0" style="font-size: 1em">
+                            @Model.Statistics.NewBaseTasksNumber базовых + @Model.Statistics.NewUserTasksNumber личных
                         </p>
-                        <p class="lead text-center m-0" style="font-size: 1.2em; display: inline-flex">
-                            из @Model.Settings.NewDailyCardsNumber
+                        <p class="lead text-start m-0" style="font-size: 1em">
+
                         </p>
                     </div>
-                    <p class="lead card-title text-center m-0">новых карт пройдено сегодня</p>
-                    <p class="lead text-center m-0" style="font-size: 1em">
-                        @Model.Statistics.NewBaseTasksNumber базовых + @Model.Statistics.NewUserTasksNumber личных
-                    </p>
-                    <p class="lead text-start m-0" style="font-size: 1em">
-                        
-                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card rounded">
+                    <div class="card-body p-2">
+                        <p class="lead text-center m-0" style="font-size: 3em"> @ForReviewTasksNumber</p>
+                        <p class="lead card-title text-center m-0">карт для повтора</p>
+                        <p class="lead text-center m-0" style="font-size: 1em">@Model.Statistics.ForReviewBaseTasksNumber базовых</p>
+                        <p class="lead text-center m-0" style="font-size: 1em">@Model.Statistics.ForReviewUserTasksNumber персональных</p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-2">
-            <div class="card rounded">
-                <div class="card-body p-2">
-                    <p class="lead text-center m-0" style="font-size: 3em"> @ForReviewTasksNumber</p>
-                    <p class="lead card-title text-center m-0">карт для повтора</p>
-                    <p class="lead text-center m-0" style="font-size: 1em">@Model.Statistics.ForReviewBaseTasksNumber базовых</p>
-                    <p class="lead text-center m-0" style="font-size: 1em">@Model.Statistics.ForReviewUserTasksNumber персональных</p>
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="my-3 mx-5">
+                    <button id="standartBTN" onclick="Redirect('StandardTraining')" class="btn btn-primary btn-lg form-control">Стандартная тренировка</button>
+                    @* <a asp-controller="Task" asp-action="StandardTraining" asp-route-id="@User.FindFirst("userid")!.Value" id="standartBTN" name="TrainingType" value="StandardTraining" class="btn btn-primary btn-lg form-control">Стандартная тренировка</a> *@
+                </div>
+                <div class="my-3 mx-5">
+                    <button id="customBTN" onclick="Redirect('CustomTraining')" class="btn btn-primary btn-lg form-control">Кастомная тренировка</button>
+                    @* <a asp-controller="Task" asp-action="StandardTraining" asp-route-id="@User.FindFirst("userid")!.Value" name="TrainingType" value="CustomTraining" class="btn btn-primary btn-lg form-control">Кастомная тренировка</a> *@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-
-<div class="text-center my-2">
-    <div class="row mt-3">
-        <div class="col-md-4 offset-md-4">
-            <div class="my-3 mx-5">
-                <button id="standartBTN" onclick="Redirect('StandardTraining')" class="btn btn-primary btn-lg form-control">Стандартная тренировка</button>
-                @* <a asp-controller="Task" asp-action="StandardTraining" asp-route-id="@User.FindFirst("userid")!.Value" id="standartBTN" name="TrainingType" value="StandardTraining" class="btn btn-primary btn-lg form-control">Стандартная тренировка</a> *@
-            </div>
-            <div class="my-3 mx-5">
-                <button id="customBTN" onclick="Redirect('CustomTraining')" class="btn btn-primary btn-lg form-control">Кастомная тренировка</button>
-                @* <a asp-controller="Task" asp-action="StandardTraining" asp-route-id="@User.FindFirst("userid")!.Value" name="TrainingType" value="CustomTraining" class="btn btn-primary btn-lg form-control">Кастомная тренировка</a> *@
-            </div>
-        </div>
-    </div>
 </div>
 
 <div id="popupBack" class="bg-primary text-center" style="opacity: 0.65; display: none; width: 100%; height: 100%;position: absolute; top: 0; left: 0;">

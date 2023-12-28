@@ -31,6 +31,20 @@ public class TaskController : Controller
 
         settings ??= new();
 
+        var twoWeeksStatistics = _unitOfWork.Statistics.GetTwoWeeksStatistics(id);
+
+        List<SplineAreaChartData> ChartPoints = new List<SplineAreaChartData>();
+
+        foreach (var stat in twoWeeksStatistics)
+        {
+            ChartPoints.Add(new() { Period = stat.Date, 
+                                    Added = stat.CreatedTasksNumber, 
+                                    Started = stat.NewBaseTasksNumber + stat.NewUserTasksNumber,
+                                    Reviewed = stat.ReviewedBaseTasksNumber + stat.ReviewedUserTasksNumber
+            });
+        }
+        ViewBag.ChartPoints = ChartPoints;
+
         TrainingSettingsVM model = new()
         {
             Settings    = settings,
@@ -334,5 +348,14 @@ public class TaskController : Controller
         }
 
         return Ok("You've finished the train!");
+    }
+
+    public class SplineAreaChartData
+    {
+        public DateOnly Period;
+        public int Added;
+        public int Reviewed;
+        public int Started;
+        public int GER_InflationRate;
     }
 }
