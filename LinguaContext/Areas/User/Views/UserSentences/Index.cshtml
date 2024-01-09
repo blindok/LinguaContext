@@ -46,6 +46,39 @@
                 </thead>
             </table>
         }
+        else if (ViewData["display"] == "fav")
+        {
+            <table id="tblDataFavoriteSentences" class="table table-bordered table-hover align-middle">
+                <thead class="text-center">
+                    <tr>
+                        <th>Sentence</th>
+                        <th>Translation</th>
+                        <th>Answer</th>
+                        <th>Answer Translation</th>
+                        <th>Liked At</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        }
+        else if (ViewData["display"] == "unwanted")
+        {
+            <table id="tblDataUnwantedTasks" class="table table-bordered table-hover align-middle">
+                <thead class="text-center">
+                    <tr>
+                        <th>Sentence</th>
+                        <th>Translation</th>
+                        <th>Answer</th>
+                        <th>First Review</th>
+                        <th>Last Review</th>
+                        <th>Next Review</th>
+                        <th>Current Interval</th>
+                        <th>Repeatition Number</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        }
     </div>
 </div>
 
@@ -204,6 +237,12 @@
         break;
     case "custom":
         <script src="~/js/UserSentences.js"></script>
+        break;
+    case "fav":
+        <script src="~/js/FavoriteSentences.js"></script>
+        break;
+    case "unwanted":
+        <script src="~/js/UnwantedTasks.js"></script>
         break;
     }
     <partial name="_ValidationScriptsPartial" />

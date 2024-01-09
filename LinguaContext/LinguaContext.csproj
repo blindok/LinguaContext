@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\FavoriteSentences.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\js\FavoriteSentences.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\LInguaContext.App\LInguaContext.App.csproj" />
     <ProjectReference Include="..\LinguaContext.DataAccess\LinguaContext.DataAccess.csproj" />
     <ProjectReference Include="..\LinguaContext.Models\LinguaContext.Models.csproj" />
@@ -30,6 +38,10 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\images\avatars\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\FavoriteSentences.js" />
   </ItemGroup>
 
 </Project>

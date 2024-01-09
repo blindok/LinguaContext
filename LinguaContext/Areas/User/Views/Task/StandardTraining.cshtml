@@ -43,8 +43,30 @@
                         Новых карточек: @(@Model.Settings.NewDailyCardsNumber - @Model.Statistics.NewBaseTasksNumber - @Model.Statistics.NewUserTasksNumber)
                         Повторение: @(@Model.Statistics.ForReviewBaseTasksNumber - @Model.Statistics.ReviewedBaseTasksNumber)
                     </div>
-                    <div class="col-md-6 text-end">
+                    <div class="col-md-4 text-end">
                         <p class="h6">@(@Model.IsReviewed ? "Повтор" : "Новое")</p>
+                    </div>
+                    @{
+                        string displayEmpty = @Model.IsLiked ? "none" : "block";
+                        string displayFill = @Model.IsLiked ? "block" : "none";
+                    }
+                    <div class="col-md-1 text-end">
+                        <input asp-for="@Model.IsUnwanted" onclick="DisplayStop(this.checked)" id="stop" hidden />
+                        <label asp-for="@Model.IsUnwanted" id="emptyStop" for="stop" style="display: block">
+                            <i class="bi bi-slash-square"></i>
+                        </label>
+                        <label asp-for="@Model.IsUnwanted" id="fillStop" for="stop" style="display: none">
+                            <i class="bi bi-slash-square-fill"></i>
+                        </label>
+                    </div>
+                    <div class="col-md-1 text-end">
+                        <input asp-for="@Model.IsLiked" onclick="DisplayHeart(this.checked)" id="like" hidden/>
+                        <label asp-for="@Model.IsLiked" id="emptyHeart" for="like" style="display: @displayEmpty">
+                            <i class="bi bi-suit-heart"></i>
+                        </label>
+                        <label asp-for="@Model.IsLiked" id="fillHeart" for="like" style="display: @displayFill">
+                            <i class="bi bi-suit-heart-fill"></i>
+                        </label>
                     </div>
                 </div>
 
@@ -57,13 +79,13 @@
                         for (int i = 0; i < wordsNumber; ++i)
                         {
                                 string id = "answer" + i.ToString();
-                                        <span class="h2">@chunks[i]</span>
-                                        <span style="display: inline-block; width: @{@width}px;">
-                                        <input id="@id" type="text" autocomplete="off"  oninput="CheckAnswer(@i, this.value, this.classList)" class="form-control" style="font-size: 2.2em" />
-                                        </span>
+                                                        <span class="h2">@chunks[i]</span>
+                                                        <span style="display: inline-block; width: @{@width}px;">
+                                                        <input id="@id" type="text" autocomplete="off"  oninput="CheckAnswer(@i, this.value, this.classList)" class="form-control" style="font-size: 2.2em" />
+                                                        </span>
                         }
 
-                                    <span class="h2">@chunks[wordsNumber]</span>
+                                                    <span class="h2">@chunks[wordsNumber]</span>
                     }
                 </div>
 
@@ -106,6 +128,30 @@
     </div>
     <div class="col-md-3"></div>
 </div>
+
+<script>
+    function DisplayHeart(val) { 
+        if (val) {
+            document.getElementById('emptyHeart').style.display = "none";
+            document.getElementById('fillHeart').style.display = "block";
+        } else {
+            document.getElementById('emptyHeart').style.display = "block";
+            document.getElementById('fillHeart').style.display = "none";
+        }
+    }
+</script>
+
+<script>
+    function DisplayStop(val) {
+        if (val) {
+            document.getElementById('emptyStop').style.display = "none";
+            document.getElementById('fillStop').style.display = "block";
+        } else {
+            document.getElementById('emptyStop').style.display = "block";
+            document.getElementById('fillStop').style.display = "none";
+        }
+    }
+</script>
 
 <script>
     const form = document.getElementById('answerForm');

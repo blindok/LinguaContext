@@ -35,6 +35,20 @@ public class UserSentencesController : Controller
         return View("Index");
     }
 
+    [HttpGet]
+    public IActionResult FavoriteSentences()
+    {
+        ViewData["display"] = "fav";
+        return View("Index");
+    }
+
+    [HttpGet]
+    public IActionResult UnwantedSentences()
+    {
+        ViewData["display"] = "unwanted";
+        return View("Index");
+    }
+
     [HttpPost]
     public IActionResult AddSentence(SentenceVM model)
     {
@@ -108,6 +122,27 @@ public class UserSentencesController : Controller
         return RedirectToAction("CustomSentences");
     }
 
+    [HttpGet]
+    public IActionResult DislikeSentence(int id)
+    {
+        int userId = int.Parse(User.FindFirst("userid")!.Value);
+        _unitOfWork.FavoriteSentences.DisLikeSentence(userId, id);
+        _unitOfWork.Save();
+        return RedirectToAction("FavoriteSentences");
+    }
+
+    [HttpGet]
+    public IActionResult ReDislikeTask(int id)
+    {
+        int userId = int.Parse(User.FindFirst("userid")!.Value);
+
+        var task = _unitOfWork.Tasks.GetFirstOrDefault(t => t.UserId == userId && t.SentenceId == id);
+        task.isUnwanted = false;
+        _unitOfWork.Tasks.Update(task);
+        _unitOfWork.Save();
+        return RedirectToAction("UnwantedSentences");
+    }
+
     #region API CALLS
 
     [HttpGet]
@@ -115,7 +150,8 @@ public class UserSentencesController : Controller
     {
         int id = int.Parse(User.FindFirst("userid")!.Value);
 
-        var tasksFromDb = _unitOfWork.Tasks.GetAllTasks(id);
+        var alltasksFromDb = _unitOfWork.Tasks.GetAllTasks(id);
+        var tasksFromDb = alltasksFromDb.Where(s => s.isUnwanted == false);
         List<UserTask> tasks;
         List<UserSentencesIndexVM> model = new();
 
@@ -156,6 +192,51 @@ public class UserSentencesController : Controller
         }
 
 
+        return Json(new { data = model });
+    }
+
+    [HttpGet]
+    public IActionResult GetFavoriteSentences()
+    {
+        int id = int.Parse(User.FindFirst("userid")!.Value);
+
+        var favs = _unitOfWork.FavoriteSentences.GetAll(id);
+
+        List<FavoriteSentenceVM> model = new();
+
+        if (favs is not null)
+        {
+            foreach (var fav in favs)
+            {
+                var sentence = _unitOfWork.Sentences.GetFirstOrDefault(s => s.SentenceId == fav.SentenceId);
+
+                model.Add(new() { Sentence = sentence!, Date = fav.Date });
+            }
+        }
+
+        return Json(new { data = model });
+    }
+
+    [HttpGet]
+    public IActionResult GetUnwantedTasks()
+    {
+        int id = int.Parse(User.FindFirst("userid")!.Value);
+
+        var alltasksFromDb = _unitOfWork.Tasks.GetAllTasks(id);
+        var tasksFromDb = alltasksFromDb.Where(s => s.isUnwanted == true);
+        List<UserTask> tasks;
+        List<UserSentencesIndexVM> model = new();
+
+        if (tasksFromDb is not null)
+        {
+            tasks = tasksFromDb.ToList();
+            foreach (var task in tasks)
+            {
+                var sentence = _unitOfWork.Sentences.GetFirstOrDefault(s => s.SentenceId == task.SentenceId)!;
+
+                model.Add(new UserSentencesIndexVM() { Sentence = sentence, Task = task });
+            }
+        }
         return Json(new { data = model });
     }
 

@@ -32,6 +32,8 @@ public class UserTask
     public bool IsPersonalTask { get; set; } = false;
     public int  WrongAnswersNumber { get; set; } = 0;
 
+    public bool isUnwanted { get; set; } = false;
+
     [ValidateNever]
     [ForeignKey("UserId")]
     public User User { get; set; }

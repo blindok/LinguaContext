@@ -14,11 +14,11 @@ public class ApplicationDbContext : DbContext
     public DbSet<PersonalSettings>    PersonalSettings    { get; set; }
     public DbSet<PersonalStatistics>  PersonalStatistics  { get; set; }
     public DbSet<UserSentenceInfo>    UserSentenceInfos   { get; set; }
+    public DbSet<FavoriteSentence>    FavoriteSentences   { get; set; }
 
     //public DbSet<Context>           Contexts            { get; set; }
     //public DbSet<Folder>            Folders             { get; set; }
     //public DbSet<SentenceInFolder>  SentencesInFolder   { get; set; }
-    //public DbSet<FavoriteSentence>  FavoriteSentences   { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

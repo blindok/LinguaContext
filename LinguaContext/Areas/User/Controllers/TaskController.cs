@@ -122,12 +122,17 @@ public class TaskController : Controller
         
         _memoryCache.Set("task" + id.ToString(), task);
 
+        var fav = _unitOfWork.FavoriteSentences.GetFavoriteSentence(id, sentence.SentenceId);
+        _memoryCache.Set("fav" + id.ToString(), (fav is null) ? false : true);
+
         StandardTrainingVM model = new StandardTrainingVM()
         {
             Sentence = sentence,
             Statistics = statistics,
             Settings = settings,
             IsReviewed = isReviewed,
+            IsLiked = (fav is null) ? false : true,
+            IsUnwanted = false
         };
 
         return View(model);
@@ -137,6 +142,8 @@ public class TaskController : Controller
     public IActionResult StandardTraining(int id, StandardTrainingVM model)
     {
         UserTask? task = (UserTask?)_memoryCache.Get("task"+id.ToString());
+        bool wasLiked = (bool?)_memoryCache.Get("fav" + id.ToString()) ?? false;
+
         task ??= _unitOfWork.Tasks.GetUserTask(id, model.Sentence.SentenceId);
 
         int result = model.ButtonValue;
@@ -162,6 +169,8 @@ public class TaskController : Controller
 
         task.NextReview = task.LastReview.AddDays(task.CurrentInterval);
 
+        task.isUnwanted = model.IsUnwanted;
+
         if (task.RepetitionNumber == 1)
         {
             _unitOfWork.Tasks.Create(task);
@@ -170,8 +179,6 @@ public class TaskController : Controller
         {
             _unitOfWork.Tasks.Update(task);
         }
-        
-        _unitOfWork.Save();
 
         if (model.IsReviewed)
         {
@@ -189,6 +196,16 @@ public class TaskController : Controller
         _memoryCache.Set("stat" + id.ToString(), model.Statistics);
 
         _unitOfWork.Statistics.Update(model.Statistics);
+
+        if (model.IsLiked && !wasLiked)
+        {
+            _unitOfWork.FavoriteSentences.LikeSentence(id, model.Sentence.SentenceId);
+        }
+        else if (!model.IsLiked && wasLiked)
+        {
+            _unitOfWork.FavoriteSentences.DisLikeSentence(id, model.Sentence.SentenceId);
+        }
+ 
         _unitOfWork.Save();
 
         if ((model.Statistics.NewBaseTasksNumber + model.Statistics.NewUserTasksNumber) >= model.Settings.NewDailyCardsNumber && 

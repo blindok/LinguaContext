@@ -41,28 +41,28 @@ public class UserTaskRepository : Repository<UserTask>, IUserTaskRepository
     public int CountBaseTasksForReview(int userId)
     {
         DateTime today = DateTime.Now.Date;
-        int n = _dbSet.Where(t => t.UserId == userId && t.NextReview.Date <= today && !t.IsPersonalTask).Count();
+        int n = _dbSet.Where(t => t.UserId == userId && t.NextReview.Date <= today && !t.IsPersonalTask && !t.isUnwanted).Count();
         return n;
     }
 
     public int CountUserTasksForReview(int userId)
     {
         DateTime today = DateTime.Now.Date;
-        int n = _dbSet.Where(t => t.UserId == userId && t.NextReview.Date <= today && t.IsPersonalTask).Count();
+        int n = _dbSet.Where(t => t.UserId == userId && t.NextReview.Date <= today && t.IsPersonalTask && !t.isUnwanted).Count();
         return n;
     }
 
     public UserTask? GetBaseReviewTask(int userId)
     {
         DateTime today = DateTime.Now.Date;
-        UserTask? task = _dbSet.Where(t => t.UserId == userId && t.NextReview.Date <= today && !t.IsPersonalTask).FirstOrDefault();
+        UserTask? task = _dbSet.Where(t => t.UserId == userId && t.NextReview.Date <= today && !t.IsPersonalTask && !t.isUnwanted).FirstOrDefault();
         return task;
     }
 
     public UserTask? GetUserReviewTask(int userId)
     {
         DateTime today = DateTime.Now.Date;
-        UserTask? task = _dbSet.Where(t => t.UserId == userId && t.NextReview.Date <= today && t.IsPersonalTask).FirstOrDefault();
+        UserTask? task = _dbSet.Where(t => t.UserId == userId && t.NextReview.Date <= today && t.IsPersonalTask && !t.isUnwanted).FirstOrDefault();
         return task;
     }
 

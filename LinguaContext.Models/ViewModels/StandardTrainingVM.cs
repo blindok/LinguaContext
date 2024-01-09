@@ -10,4 +10,6 @@ public class StandardTrainingVM
     public byte                 ButtonValue     { get; set; }
     public bool                 WrongAnswer     { get; set; }
     public bool                 IsReviewed      { get; set; }
+    public bool                 IsLiked         { get; set; } 
+    public bool                 IsUnwanted      { get; set; }
 }
