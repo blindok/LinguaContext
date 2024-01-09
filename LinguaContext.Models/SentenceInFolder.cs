@@ -1,10 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace LinguaContext.Models;
 
-[PrimaryKey(nameof(FolderId), nameof(SentenceId))]
 public class SentenceInFolder
 {
+    [Key]
+    public int Id { get; set; }
+
     public int FolderId { get; set; }
     public int SentenceId { get; set; }
 
