@@ -364,7 +364,7 @@ public class TaskController : Controller
             _unitOfWork.Save();
         }
 
-        return Ok("You've finished the train!");
+        return View();
     }
 
     public class SplineAreaChartData
