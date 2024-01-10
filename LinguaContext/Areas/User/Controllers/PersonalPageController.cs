@@ -8,6 +8,7 @@ namespace LinguaContext.Areas.User.Controllers;
 
 [Area("User")]
 [Authorize]
+[Route("user")]
 public class PersonalPageController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -20,6 +21,7 @@ public class PersonalPageController : Controller
     }
 
     [HttpGet]
+    [Route("account")]
     public IActionResult Account(int id)
     {
         var user = _unitOfWork.Users.GetFirstOrDefault(x => x.Id == id);
@@ -33,12 +35,14 @@ public class PersonalPageController : Controller
     }
 
     [HttpGet]
+    [Route("general")]
     public IActionResult Settings(int id)
     {
         return RedirectToAction("UpdatePersonalInfo", new { id = id });
     }
 
     [HttpGet]
+    [Route("info")]
     public IActionResult UpdatePersonalInfo(int id) 
     {
         var user = _unitOfWork.Users.GetFirstOrDefault(x => x.Id == id);
@@ -47,6 +51,7 @@ public class PersonalPageController : Controller
     }
 
     [HttpPost]
+    [Route("info")]
     public IActionResult UpdatePersonalInfo(Models.User user, IFormFile? file)
     {
         string wwwRootPath = _webHostEnvironment.WebRootPath;
@@ -82,6 +87,7 @@ public class PersonalPageController : Controller
     }
 
     [HttpGet]
+    [Route("factors")]
     public IActionResult EditPersonalFactors(int id)
     {
         var personalFactors = _unitOfWork.Users.GetPersonalFactorsByUserId(id);
@@ -97,6 +103,7 @@ public class PersonalPageController : Controller
     }
 
     [HttpPost]
+    [Route("factors")]
     public IActionResult EditPersonalFactors(int id, PersonalFactors factors)
     {
         ViewData["action"] = "PersonalFactors";
@@ -127,6 +134,7 @@ public class PersonalPageController : Controller
     }
 
     [HttpGet]
+    [Route("settings")]
     public IActionResult EditPersonalSettings(int id)
     {
         var personalSettings = _unitOfWork.Users.GetPersonalSettingsByUserId(id);
@@ -142,6 +150,7 @@ public class PersonalPageController : Controller
     }
 
     [HttpPost]
+    [Route("settings")]
     public IActionResult EditPersonalSettings(int id, PersonalSettings settings)
     {
         ViewData["action"] = "PersonalSettings";

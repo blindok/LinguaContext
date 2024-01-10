@@ -10,6 +10,7 @@ namespace LinguaContext.Areas.User.Controlles;
 
 [Area("User")]
 [Authorize(Roles = "user,admin")]
+[Route("task")]
 public class TaskController : Controller
 {
     private readonly IUnitOfWork    _unitOfWork;
@@ -22,8 +23,10 @@ public class TaskController : Controller
     }
 
     [HttpGet]
+    [Route("")]
     public IActionResult Index(int id)
     {
+        if (id == 0) id = int.Parse(User.FindFirst("userid")!.Value);
         PersonalSettings? settings = _unitOfWork.Users.GetPersonalSettingsByUserId(id);
         PersonalStatistics statistics = _unitOfWork.Statistics.GetCurrentStatistics(id);
 
@@ -55,6 +58,7 @@ public class TaskController : Controller
     }
 
     [HttpPost]
+    [Route("")]
     public IActionResult Index(int id, TrainingSettingsVM model)
     {
         _memoryCache.Set("set" + id.ToString(), model.Settings);
@@ -73,6 +77,7 @@ public class TaskController : Controller
     }
 
     [HttpGet]
+    [Route("standart")]
     public IActionResult StandardTraining(int id)
     {
 
@@ -139,6 +144,7 @@ public class TaskController : Controller
     }
 
     [HttpPost]
+    [Route("standart")]
     public IActionResult StandardTraining(int id, StandardTrainingVM model)
     {
         UserTask? task = (UserTask?)_memoryCache.Get("task"+id.ToString());
@@ -218,6 +224,7 @@ public class TaskController : Controller
     }
 
     [HttpGet]
+    [Route("custom")]
     public IActionResult CustomTraining(int id)
     {
         var settings = (PersonalSettings?)_memoryCache.Get("set" + id.ToString());
@@ -285,6 +292,7 @@ public class TaskController : Controller
     }
 
     [HttpPost]
+    [Route("custom")]
     public IActionResult CustomTraining(int id, CustomTrainingVM model)
     {
         UserTask? task = (UserTask?)_memoryCache.Get("task" + id.ToString());
@@ -355,6 +363,7 @@ public class TaskController : Controller
     }
 
     [HttpGet]
+    [Route("finish")]
     public IActionResult FinishTraining(int id)
     {
         PersonalStatistics? statistics = (PersonalStatistics?)_memoryCache.Get("stat" + id.ToString());

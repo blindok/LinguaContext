@@ -12,6 +12,7 @@ using LinguaContext.DataAccess.Repository.Interfaces;
 namespace LinguaContext.Areas.Identity.Controllers;
 
 [Area("Identity")]
+[Route("auth")]
 public class AuthenticationController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -26,16 +27,19 @@ public class AuthenticationController : Controller
     }
 
     [HttpGet]
+    [Route("register")]
     public IActionResult Register()
     {
         RegisterVM registerVM = new RegisterVM()
         {
             User = new Models.User(),
         };
+
         return View(registerVM);
     }
 
     [HttpPost]
+    [Route("register")]
     public IActionResult Register(RegisterVM registerVM)
     {
         string passpordHash = BCrypt.Net.BCrypt.HashPassword(registerVM.Password);
@@ -56,6 +60,7 @@ public class AuthenticationController : Controller
     }
 
     [HttpGet]
+    [Route("login")]
     public IActionResult Login()
     {
         LoginVM loginVM = new LoginVM();
@@ -63,6 +68,7 @@ public class AuthenticationController : Controller
     }
 
     [HttpPost]
+    [Route("login")]
     public IActionResult Login(LoginVM loginVM)
     {
         var user = _unitOfWork.Users.GetFirstOrDefault(u => u.Email == loginVM.Email);
@@ -85,6 +91,7 @@ public class AuthenticationController : Controller
     }
 
     [HttpGet]
+    [Route("logout")]
     public IActionResult Logout()
     {
         Response.Cookies.Delete("token");

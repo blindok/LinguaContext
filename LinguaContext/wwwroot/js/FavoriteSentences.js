@@ -4,7 +4,7 @@
 
 function loadDataTable() {
     dataTable = $('#tblDataFavoriteSentences').DataTable({
-        "ajax": { url: '/user/usersentences/getfavoritesentences/' },
+        "ajax": { url: '/sentences/getfavoritesentences/' },
         "columns": [
             { data: 'sentence.phrase', width: 40 },
             { data: 'sentence.translation', width: 40 },

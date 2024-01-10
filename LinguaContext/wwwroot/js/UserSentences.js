@@ -4,7 +4,7 @@
 
 function loadDataTable() {
     dataTable = $('#tblDataUserSentences').DataTable({
-        "ajax": { url: '/user/usersentences/getusersentences/' },
+        "ajax": { url: '/sentences/getusertasks/' },
         "columns": [
             { data: 'sentence.phrase', width: 40 },
             { data: 'sentence.translation', width: 40 },

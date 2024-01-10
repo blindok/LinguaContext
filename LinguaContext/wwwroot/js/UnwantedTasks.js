@@ -4,7 +4,7 @@
 
 function loadDataTable() {
     dataTable = $('#tblDataUnwantedTasks').DataTable({
-        "ajax": { url: '/user/usersentences/getunwantedtasks/'},
+        "ajax": { url: '/sentences/getunwantedtasks/' },
         "columns": [
             { data: 'sentence.phrase', width: "30%" },
             { data: 'sentence.translation', width: "30%" },

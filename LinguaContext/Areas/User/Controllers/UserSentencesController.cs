@@ -10,6 +10,7 @@ namespace LinguaContext.Areas.User.Controllers;
 
 [Area("User")]
 [Authorize(Roles = "user,admin")]
+[Route("sentences")]
 public class UserSentencesController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -22,6 +23,7 @@ public class UserSentencesController : Controller
     }
 
     [HttpGet]
+    [Route("tasks")]
     public IActionResult Index(int id)
     {
         ViewData["display"] = "base";
@@ -29,6 +31,7 @@ public class UserSentencesController : Controller
     }
 
     [HttpGet]
+    [Route("personal")]
     public IActionResult CustomSentences()
     {
         ViewData["display"] = "custom";
@@ -36,6 +39,7 @@ public class UserSentencesController : Controller
     }
 
     [HttpGet]
+    [Route("favorite")]
     public IActionResult FavoriteSentences()
     {
         ViewData["display"] = "fav";
@@ -43,6 +47,7 @@ public class UserSentencesController : Controller
     }
 
     [HttpGet]
+    [Route("blacklist")]
     public IActionResult UnwantedSentences()
     {
         ViewData["display"] = "unwanted";
@@ -50,6 +55,7 @@ public class UserSentencesController : Controller
     }
 
     [HttpPost]
+    [Route("add")]
     public IActionResult AddSentence(SentenceVM model)
     {
         int id = int.Parse(User.FindFirst("userid")!.Value);
@@ -73,6 +79,7 @@ public class UserSentencesController : Controller
     }
 
     [HttpGet]
+    [Route("delete")]
     public IActionResult DeleteSentence(int id)
     {
         _unitOfWork.Sentences.RemoveUserSentence(id);
@@ -81,6 +88,7 @@ public class UserSentencesController : Controller
     }
 
     [HttpGet]
+    [Route("edit")]
     public IActionResult EditSentence(int id)
     {
         Sentence sentence = _unitOfWork.Sentences.GetFirstOrDefault(s => s.SentenceId == id)!;
@@ -104,6 +112,7 @@ public class UserSentencesController : Controller
     }
 
     [HttpPost]
+    [Route("edit")]
     public IActionResult EditSentence(SentenceVM model)
     {
         var sentence = (Sentence)_memoryCache.Get("sen" + model.Id.ToString())!;
@@ -123,6 +132,7 @@ public class UserSentencesController : Controller
     }
 
     [HttpGet]
+    [Route("dislike")]
     public IActionResult DislikeSentence(int id)
     {
         int userId = int.Parse(User.FindFirst("userid")!.Value);
@@ -132,6 +142,7 @@ public class UserSentencesController : Controller
     }
 
     [HttpGet]
+    [Route("redislike")]
     public IActionResult ReDislikeTask(int id)
     {
         int userId = int.Parse(User.FindFirst("userid")!.Value);
@@ -146,6 +157,7 @@ public class UserSentencesController : Controller
     #region API CALLS
 
     [HttpGet]
+    [Route("gettasks")]
     public IActionResult GetTasks()
     {
         int id = int.Parse(User.FindFirst("userid")!.Value);
@@ -169,6 +181,7 @@ public class UserSentencesController : Controller
     }
 
     [HttpGet]
+    [Route("getusertasks")]
     public IActionResult GetUserSentences()
     {
         int id = int.Parse(User.FindFirst("userid")!.Value);
@@ -196,6 +209,7 @@ public class UserSentencesController : Controller
     }
 
     [HttpGet]
+    [Route("getfavoritesentences")]
     public IActionResult GetFavoriteSentences()
     {
         int id = int.Parse(User.FindFirst("userid")!.Value);
@@ -218,6 +232,7 @@ public class UserSentencesController : Controller
     }
 
     [HttpGet]
+    [Route("getunwantedtasks")]
     public IActionResult GetUnwantedTasks()
     {
         int id = int.Parse(User.FindFirst("userid")!.Value);
